@@ -2,13 +2,10 @@
 
 import 'dotenv/config'
 import { SignupFormSchema, FormState, LoginFormSchema } from "./definitions"
-import { userTable } from "@/db/schema"
-import { drizzle } from "drizzle-orm/node-postgres"
+import { userTable, db } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import bcrypt from "bcrypt"
-
-const db = drizzle(process.env.DATABASE_URL)
-
+import { createSession } from "./session"
 
 export async function register(
     state: FormState,
@@ -54,7 +51,8 @@ export async function register(
         }
     }
 
-    const userId = user.id.toString()
+    const userId = user.id
+    await createSession(userId)
 
     return {
         message: "Registration successful",
@@ -101,10 +99,12 @@ export async function login(
             message: "Login failed, wrong password.",
         }
     }
-    else {
-        return {
-            message: "Login successful.",
-        }
+
+    const userId = user.id
+    await createSession(userId)
+
+    return {
+        message: "Login successful.",
     }
-    const userId = user.id.toString()
+
 }

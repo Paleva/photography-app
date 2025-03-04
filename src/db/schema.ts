@@ -1,5 +1,7 @@
 
-import { text, pgTable, varchar, serial, timestamp } from 'drizzle-orm/pg-core'
+import { text, pgTable, varchar, serial, timestamp, integer } from 'drizzle-orm/pg-core'
+import { drizzle } from "drizzle-orm/node-postgres"
+
 
 export const userTable = pgTable("users", {
     id: serial().primaryKey(),
@@ -11,3 +13,12 @@ export const userTable = pgTable("users", {
     bio: text(),
     created_at: timestamp().defaultNow(),
 });
+
+export const sessions = pgTable("sessions", {
+    session_id: serial().primaryKey(),
+    user_id: integer().references(() => userTable.id).notNull(),
+    created_at: timestamp().defaultNow(),
+    expires_at: timestamp().notNull(),
+})
+
+export const db = drizzle(process.env.DATABASE_URL)
