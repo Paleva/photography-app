@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
 
 const db = drizzle(process.env.DATABASE_URL)
 
+
 export async function POST(req: Request) {
     const { email, password, username } = await req.json()
     const hashedPassword = await bcrypt.hash(password, 10)
