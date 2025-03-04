@@ -7,6 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card"
+import Link from 'next/link'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useFormStatus } from "react-dom"
@@ -35,9 +36,9 @@ export function RegisterForm({
 		(<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<Card>
 				<CardHeader>
-					<CardTitle className="text-2xl">Register</CardTitle>
+					<CardTitle className="text-2xl">Sign up</CardTitle>
 					<CardDescription>
-						Enter your email and username below to register
+						Enter your email and username below to sign up
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -74,7 +75,16 @@ export function RegisterForm({
 									</ul>
 								</div>
 							)}
+							{state?.message && state.message !== "Registration successful" && (
+								<p className="text-sm text-red-500">{state.message}</p>
+							)}
 							<RegisterButton />
+							<div className=" text-center text-sm">
+								Already have an account?{' '}
+								<Link className="underline" href="/login">
+									Sign in
+								</Link>
+							</div>
 						</div>
 					</form>
 				</CardContent>
