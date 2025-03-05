@@ -10,27 +10,15 @@ import {
 import Link from 'next/link'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useFormStatus } from "react-dom"
+import { useActionState } from "react"
 import { login } from "@/app/(public)/auth/auth"
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+
 
 export function LoginForm({
     className,
     ...props
 }) {
-    const router = useRouter();
-    const [state, setState] = useState({ errors: null, message: null });
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const response = await login(state, formData);
-        setState(response);
-        if (response.message === "Login successful.") {
-            router.push('/home');
-        }
-    };
+    const [state, action, pending] = useActionState(login);
 
     return (
         (<div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -42,7 +30,7 @@ export function LoginForm({
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit}>
+                    <form action={action}>
                         <div className="flex flex-col gap-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email</Label>
@@ -63,7 +51,9 @@ export function LoginForm({
                             {state?.message && state.message !== "Login successful." && (
                                 <p className="text-sm text-red-500">{state.message}</p>
                             )}
-                            <LoginButton />
+                            <Button disabled={pending} aria-disabled={pending} type="submit" className="w-full">
+                                {pending ? "Logging in..." : "Login"}
+                            </Button>
                             <div className="text-center text-sm">
                                 Don&apos;t have an account?{' '}
                                 <Link className="underline" href="/register">
@@ -76,14 +66,4 @@ export function LoginForm({
             </Card>
         </div>)
     );
-}
-
-export function LoginButton() {
-    const { pending } = useFormStatus();
-
-    return (
-        <Button aria-disabled={pending} type="submit" className="w-full">
-            {pending ? "Logging in..." : "Login"}
-        </Button>
-    )
 }

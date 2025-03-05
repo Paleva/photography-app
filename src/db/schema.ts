@@ -1,6 +1,6 @@
 
 import { text, pgTable, varchar, serial, timestamp, integer } from 'drizzle-orm/pg-core'
-import { drizzle } from "drizzle-orm/node-postgres"
+import { drizzle } from "drizzle-orm/postgres-js"
 
 
 export const userTable = pgTable("users", {

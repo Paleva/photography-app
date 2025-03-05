@@ -1,7 +1,10 @@
+import 'server-only'
+
 import { sessions, db } from "@/db/schema"
 import { SessionPayload } from "./definitions"
 import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers";
+import { redirect } from 'next/navigation';
 
 const key = new TextEncoder().encode(process.env.SESSION_SECRET)
 
@@ -23,6 +26,17 @@ export async function decrypt(session: string | undefined = '') {
         console.log('Failed to verify session');
         return null;
     }
+}
+
+export async function verifySession() {
+    const cookie = (await cookies()).get('session')?.value;
+    const session = await decrypt(cookie);
+
+    if (!session?.userId) {
+        redirect('/login');
+    }
+    console.log(session.userId)
+    return { isAuth: true, userId: Number(session.userId) };
 }
 
 
@@ -47,5 +61,5 @@ export async function createSession(id: number) {
             path: '/'
         })
 
-
+    redirect('/home')
 }

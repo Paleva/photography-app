@@ -10,27 +10,15 @@ import {
 import Link from 'next/link'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useFormStatus } from "react-dom"
+import { useActionState } from "react"
 import { register } from "@/app/(public)/auth/auth"
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+
 
 export function RegisterForm({
 	className,
 	...props
 }) {
-	const router = useRouter();
-	const [state, setState] = useState({ errors: null, message: null });
-
-	const handleSubmit = async (event) => {
-		event.preventDefault();
-		const formData = new FormData(event.target);
-		const response = await register(state, formData);
-		setState(response);
-		if (response.message === "Registration successful") {
-			router.push('/home');
-		}
-	};
+	const [state, action, pending] = useActionState(register);
 
 	return (
 		(<div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -42,7 +30,7 @@ export function RegisterForm({
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form onSubmit={handleSubmit}>
+					<form action={action}>
 						<div className="flex flex-col gap-6">
 							<div className="grid gap-2">
 								<Label htmlFor="username">Username</Label>
@@ -78,7 +66,9 @@ export function RegisterForm({
 							{state?.message && state.message !== "Registration successful" && (
 								<p className="text-sm text-red-500">{state.message}</p>
 							)}
-							<RegisterButton />
+							<Button disabled={pending} aria-disabled={pending} type="submit" className="w-full">
+								{pending ? "Registering..." : "Register"}
+							</Button>
 							<div className=" text-center text-sm">
 								Already have an account?{' '}
 								<Link className="underline" href="/login">
@@ -91,14 +81,4 @@ export function RegisterForm({
 			</Card>
 		</div>)
 	);
-}
-
-export function RegisterButton() {
-	const { pending } = useFormStatus();
-
-	return (
-		<Button aria-disabled={pending} type="submit" className="w-full">
-			{pending ? "Registering..." : "Register"}
-		</Button>
-	)
 }
