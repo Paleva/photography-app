@@ -12,14 +12,15 @@ export default function Navbar() {
             <div className="flex items-center justify-between w-full" >
                 {/* Menu and Logo */}
                 < div className="flex items-center flex-shrink-0" >
+                    <SidebarTrigger />
                     <Link href="/" >
-                        <Camera color="black" size={32} className="" />
+                        <Camera color="black" size={32} className="ml-4" />
                     </Link>
                 </div>
                 {/* Log in button */}
-                <div className="flex-shrink-0" >
+                <div className="flex-shrink-0 items-center flex gap-4" >
                     <Link href="/login" >
-                        <Button>
+                        <Button variant='outline' className="px-4 py-2 text-sm font-medium">
                             <UserCircleIcon />
                             Sign in
                         </Button>

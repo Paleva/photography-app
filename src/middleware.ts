@@ -15,7 +15,6 @@ export default async function middleware(req: NextRequest) {
     // 3. Decrypt the session from the cookie
     const cookie = (await cookies()).get('session')?.value;
     const session = await decrypt(cookie);
-    console.log(session)
 
     // 4. Redirect
     if (isProtectedRoute && !session?.userId) {
@@ -23,4 +22,11 @@ export default async function middleware(req: NextRequest) {
     }
 
     return NextResponse.next();
+}
+
+export const config = {
+    matcher: [
+        '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+        '/(api/trpc)(.*)'
+    ]
 }
