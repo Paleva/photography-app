@@ -6,7 +6,7 @@ import { photos, db } from '@/db/schema'
 import { cookies } from 'next/headers'
 import { decrypt } from '@/app/(public)/auth/session'
 
-export async function POST(req: Request, res: NextResponse) {
+export async function POST(req: Request) {
     const formData = await req.formData()
     const file: File | null = formData.get('file') as unknown as File
 

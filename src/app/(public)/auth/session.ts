@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { sessions, db } from "@/db/schema"
+// import { sessions, db } from "@/db/schema"
 import { SessionPayload } from "./definitions"
 import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers";
@@ -24,6 +24,7 @@ export async function decrypt(session: string | undefined = '') {
         return payload;
     } catch (error) {
         console.log('Failed to verify session');
+        console.log(error);
         return null;
     }
 }
@@ -44,12 +45,12 @@ export async function createSession(id: number) {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
 
-    const data = await db
-        .insert(sessions)
-        .values({ user_id: id, expires_at: expiresAt })
-        .returning({ id: sessions.session_id })
+    // const data = await db
+    //     .insert(sessions)
+    //     .values({ user_id: id, expires_at: expiresAt })
+    //     .returning({ id: sessions.session_id })
 
-    const sessionId = data[0].id
+    // const sessionId = data[0].id
 
     const session = await encrypt({ userId: id, expiresAt })
 

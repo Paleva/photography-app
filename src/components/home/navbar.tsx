@@ -12,7 +12,7 @@ export default function Navbar() {
             <div className="flex items-center justify-between w-full" >
                 {/* Menu and Logo */}
                 < div className="flex items-center flex-shrink-0" >
-                    <SidebarTrigger />
+
                     <Link href="/" >
                         <Camera color="black" size={32} className="ml-4" />
                     </Link>
