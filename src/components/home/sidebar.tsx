@@ -2,12 +2,12 @@
 
 import { Separator } from '@/components/ui/separator'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
-import { HomeIcon, ThumbsUp, UserCircleIcon } from 'lucide-react'
+import { HomeIcon, Image, ImagePlus, ThumbsUp, UserCircleIcon } from 'lucide-react'
 import Link from 'next/link'
 
 export default function HomeSidebar() {
     return (
-        <Sidebar className='pt-16 z-40 border-none' collapsible="icon">
+        <Sidebar className='pt-16 z-40' collapsible="icon">
             <SidebarContent className="bg-background">
                 <MainSection />
                 <Separator />
@@ -37,7 +37,7 @@ function MainSection() {
     return (
         <SidebarGroup>
             <SidebarGroupContent>
-                <SidebarMenu>
+                <SidebarMenu >
                     {items.map((item) => (
                         <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton tooltip={item.title}
@@ -65,12 +65,24 @@ function PersonalSection() {
             url: '/user/liked',
             icon: ThumbsUp,
             auth: true
+        },
+        {
+            title: "Uploads",
+            url: '/user/uploads',
+            icon: Image,
+            auth: true
+        },
+        {
+            title: "Upload photo",
+            url: '/upload',
+            icon: ImagePlus,
+            auth: true
         }
     ]
 
 
     return (
-        <SidebarGroup>
+        <SidebarGroup >
             <SidebarGroupLabel> YOU </SidebarGroupLabel>
             <SidebarGroupContent>
                 <SidebarMenu>
@@ -83,12 +95,13 @@ function PersonalSection() {
                                 <Link href={item.url} className="flex items-center gap-4">
                                     <item.icon />
                                     <span className='text-sm'>{item.title}</span>
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    ))}
-                </SidebarMenu>
-            </SidebarGroupContent>
-        </SidebarGroup>
+                                </Link >
+                            </SidebarMenuButton >
+                        </SidebarMenuItem >
+                    ))
+                    }
+                </SidebarMenu >
+            </SidebarGroupContent >
+        </SidebarGroup >
     )
 }

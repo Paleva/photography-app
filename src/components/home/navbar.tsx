@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 export default function Navbar() {
 
     return (
-        <nav className="fixed top-0 left-0 right-0 h-16 bg-gray-300 flex items-center px-2 pr-5 z-50" >
+        <nav className="fixed top-0 left-0 right-0 h-16 bg-gray-300 flex items-center px-2 pr-5 z-50 " >
             <div className="flex items-center justify-between w-full" >
                 {/* Menu and Logo */}
                 < div className="flex items-center flex-shrink-0" >

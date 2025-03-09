@@ -1,7 +1,12 @@
 
+
 import { text, pgTable, varchar, serial, timestamp, integer } from 'drizzle-orm/pg-core'
 import { drizzle } from "drizzle-orm/postgres-js"
 
+if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not defined");
+}
+export const db = drizzle(process.env.DATABASE_URL);
 
 export const userTable = pgTable("users", {
     id: serial().primaryKey(),
@@ -21,4 +26,13 @@ export const sessions = pgTable("sessions", {
     expires_at: timestamp().notNull(),
 })
 
-export const db = drizzle(process.env.DATABASE_URL)
+export const photos = pgTable("photos", {
+    id: serial().primaryKey(),
+    title: varchar({ length: 255 }),
+    file_path: text(),
+    views: integer().default(0),
+    likes: integer().default(0),
+    uploaded_at: timestamp().defaultNow(),
+    user_id: integer()
+})
+
