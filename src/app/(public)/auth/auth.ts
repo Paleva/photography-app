@@ -6,6 +6,7 @@ import { userTable, db } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import bcrypt from "bcrypt"
 import { createSession } from "./session"
+import { authClient } from '@/lib/auth-client'
 
 export async function register(
     state: FormState,
