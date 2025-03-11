@@ -41,7 +41,7 @@ export async function verifySession() {
 }
 
 
-export async function createSession(id: number) {
+export async function createSession(id: number, username: string) {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
 
@@ -52,7 +52,7 @@ export async function createSession(id: number) {
 
     // const sessionId = data[0].id
 
-    const session = await encrypt({ userId: id, expiresAt })
+    const session = await encrypt({ userId: id, username, expiresAt })
 
         ; (await cookies()).set('session', session, {
             httpOnly: true,
@@ -65,7 +65,15 @@ export async function createSession(id: number) {
     redirect('/')
 }
 
-export async function deleteSession() {
+
+export async function logout() {
     const cookieStore = await cookies();
     cookieStore.delete('session');
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    redirect('/login')
+}
+
+export async function getSession() {
+    const cookie = (await cookies()).get('session')?.value;
+    return await decrypt(cookie);
 }
