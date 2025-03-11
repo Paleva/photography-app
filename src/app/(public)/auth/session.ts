@@ -64,3 +64,8 @@ export async function createSession(id: number) {
 
     redirect('/')
 }
+
+export async function deleteSession() {
+    const cookieStore = await cookies();
+    cookieStore.delete('session');
+}

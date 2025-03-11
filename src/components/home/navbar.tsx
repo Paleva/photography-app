@@ -1,9 +1,15 @@
-'use client'
-
-import { Camera, UserCircleIcon } from 'lucide-react';
+import { Camera, LogOut, UserCircleIcon } from 'lucide-react';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useState } from 'react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { logout } from "@/app/(public)/auth/auth";
+import { SidebarTrigger } from '../ui/sidebar';
 
 export default function Navbar() {
 
@@ -12,19 +18,38 @@ export default function Navbar() {
             <div className="flex items-center justify-between w-full" >
                 {/* Menu and Logo */}
                 < div className="flex items-center flex-shrink-0" >
-
+                    <SidebarTrigger></SidebarTrigger>
                     <Link href="/" >
                         <Camera color="black" size={32} className="ml-4" />
                     </Link>
                 </div>
-                {/* Log in button */}
+                {/* Login/User buttons */}
+
                 <div className="flex-shrink-0 items-center flex gap-4" >
-                    <Link href="/login" >
-                        <Button variant='outline' className="px-4 py-2 text-sm font-medium">
-                            <UserCircleIcon />
-                            Sign in
-                        </Button>
-                    </Link>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="px-4 py-2 text-sm font-medium">
+                                <UserCircleIcon className="mr-2" />
+                                My Account
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem>Profile</DropdownMenuItem>
+                            <DropdownMenuItem>Settings</DropdownMenuItem>
+                            <form action={logout}>
+                                <DropdownMenuItem >
+                                    <button>
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        <span>Log out</span>
+                                    </button>
+                                </DropdownMenuItem>
+                            </form>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    {/* <Button variant='outline' className="px-4 py-2 text-sm font-medium">
+                        <UserCircleIcon className="mr-2" />
+                        Sign in
+                    </Button> */}
                 </div>
             </div>
         </nav>

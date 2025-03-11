@@ -5,8 +5,8 @@ import { SignupFormSchema, FormState, LoginFormSchema } from "./definitions"
 import { userTable, db } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import bcrypt from "bcrypt"
-import { createSession } from "./session"
-import { authClient } from '@/lib/auth-client'
+import { createSession, deleteSession } from "./session"
+import { redirect } from 'next/navigation'
 
 export async function register(
     state: FormState,
@@ -108,4 +108,10 @@ export async function login(
         message: "Login successful.",
     }
 
+}
+
+export async function logout() {
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    deleteSession()
+    redirect('/login')
 }
