@@ -14,7 +14,6 @@ export default async function Page() {
 
 
 async function PostCard() {
-
     return (
         <Card className='m-2'>
             <CardContent>

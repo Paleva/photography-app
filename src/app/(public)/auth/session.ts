@@ -12,7 +12,7 @@ async function encrypt(payload: SessionPayload) {
     return new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
-        .setExpirationTime('1hr')
+        .setExpirationTime('7d')
         .sign(key);
 }
 
@@ -62,5 +62,5 @@ export async function createSession(id: number) {
             path: '/'
         })
 
-    redirect('/home')
+    redirect('/')
 }

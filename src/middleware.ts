@@ -1,27 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSessionCookie } from "better-auth/cookies";
 import { decrypt } from '@/app/(public)/auth/session';
 import { cookies } from 'next/headers';
 
-// 1. Specify protected and public routes
 const protectedRoutes = ['/home', '/upload'];
 // const publicRoutes = ['/login', '/register', '/'];
 
-export default async function middleware(req: NextRequest) {
-    // 2. Check if the current route is protected or public
-    const path = req.nextUrl.pathname;
-    const isProtectedRoute = protectedRoutes.includes(path);
-    // const isPublicRoute = publicRoutes.includes(path);
-    // console.log("THIS IS PRINTED NAXUI" + isPublicRoute)
+// export default async function middleware(req: NextRequest) {
 
-    // 3. Decrypt the session from the cookie
-    const cookie = (await cookies()).get('session')?.value;
-    const session = await decrypt(cookie);
+//     const path = req.nextUrl.pathname;
+//     const isProtectedRoute = protectedRoutes.includes(path);
 
-    // 4. Redirect
-    if (isProtectedRoute && !session?.userId) {
-        return NextResponse.redirect(new URL('/login', req.nextUrl));
+//     const cookie = (await cookies()).get('session')?.value;
+//     const session = await decrypt(cookie);
+
+//     if (isProtectedRoute && !session?.userId) {
+//         return NextResponse.redirect(new URL('/login', req.nextUrl));
+//     }
+
+//     return NextResponse.next();
+// }
+
+
+export async function middleware(request: NextRequest) {
+    const sessionCookie = getSessionCookie(request);
+    if (!sessionCookie) {
+        return NextResponse.redirect(new URL("/login", request.url));
     }
-
     return NextResponse.next();
 }
 

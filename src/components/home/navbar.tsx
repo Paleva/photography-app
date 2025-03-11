@@ -2,8 +2,8 @@
 
 import { Camera, UserCircleIcon } from 'lucide-react';
 import Link from "next/link";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { useState } from 'react';
 
 export default function Navbar() {
 

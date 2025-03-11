@@ -14,7 +14,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import Navbar from '@/components/home/navbar';
-import { SidebarProvider } from '@/components/ui/sidebar';
 
 export default function UploadPage() {
 
