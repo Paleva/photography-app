@@ -3,22 +3,27 @@
 import { LoginForm } from "@/components/ui/login-form"
 import Image from 'next/image'
 
+
 export default function AuthPage() {
     return (
-        <div>
-            <div className="flex h-screen bg-gray-400">
-                <div className='lg:h-screen lg:overflow-hidden inset-0 absolute lg:relative'>
-                    <Image
-                        src="/trees_vertical.jpg"
-                        width={960}
-                        height={1080}
-                        alt="landscape"
-                        className="h-full object-cover lg:blur-0 blur-lg opacity-30 lg:opacity-95"
-                    />
-                </div>
-                <div className="grow m-4 w-full lg:w-1/2 flex items-center justify-center relatize z-10">
-                    <LoginForm className="w-full max-w-sm" />
-                </div>
+        <div className="relative h-screen w-screen">
+            {/* Background image that covers the entire screen */}
+            <div className="absolute inset-0 bg-black/30 z-10"></div>
+            <div className="absolute inset-0 z-0 bg-gray-800">
+                <Image
+                    src="/landscape.jpg"
+                    fill
+                    priority
+                    alt="landscape"
+                    className="object-cover w-full h-full  blur-lg opacity-50"
+                />
+            </div>
+
+            {/* Overlay for better form visibility */}
+
+            {/* Centered form container */}
+            <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
+                <LoginForm className="w-96 md:w-[450px] bg-white/90 rounded-lg shadow-xl" />
             </div>
         </div>
     )

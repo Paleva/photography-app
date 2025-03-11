@@ -73,19 +73,19 @@ export default function UploadPage() {
     return (
         <>
             {/* <Navbar /> */}
-            <div className="container mx-auto px-4 py-8 max-w-6xl mt-16">
+            <div className="container mx-auto px-4 py-8 max-w-7xl mt-16">
                 <h1 className="text-3xl font-bold text-center mb-8 md:text-4xl">
                     Upload Your Photo
                 </h1>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Upload Section */}
-                    <Card className="shadow-lg">
-                        <CardHeader>
-                            <CardTitle>Select Image</CardTitle>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Upload Section with Details */}
+                    <Card className="shadow-lg min-h-[550px]">
+                        <CardHeader className="pb-2">
+                            <CardTitle>Upload Details</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <form onSubmit={upload} className="space-y-4">
+                        <CardContent className="p-6">
+                            <form onSubmit={upload} className="space-y-6">
                                 <div className="space-y-2">
                                     <Label htmlFor='file'>Choose a photo</Label>
                                     <Input
@@ -98,11 +98,40 @@ export default function UploadPage() {
                                     />
                                 </div>
 
+                                <div className="space-y-2">
+                                    <Label htmlFor="description">Description</Label>
+                                    <Textarea
+                                        id="description"
+                                        placeholder="Add a description for your image"
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        className="resize-none"
+                                        rows={4}
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="category">Category</Label>
+                                    <Select value={category} onValueChange={setCategory}>
+                                        <SelectTrigger id="category" className="w-full">
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="nature">Nature</SelectItem>
+                                            <SelectItem value="people">People</SelectItem>
+                                            <SelectItem value="urban">Urban</SelectItem>
+                                            <SelectItem value="animals">Animals</SelectItem>
+                                            <SelectItem value="abstract">Abstract</SelectItem>
+                                            <SelectItem value="other">Other</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
                                 <Button
                                     disabled={pending}
                                     type='submit'
                                     id='upload'
-                                    className="w-full">
+                                    className="w-full mt-4">
                                     {pending ? 'Uploading...' : 'Upload Image'}
                                 </Button>
 
@@ -119,11 +148,11 @@ export default function UploadPage() {
                     </Card>
 
                     {/* Preview Section */}
-                    <Card className="shadow-lg">
-                        <CardHeader>
+                    <Card className="shadow-lg min-h-[550px]">
+                        <CardHeader className="pb-2">
                             <CardTitle>Image Preview</CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-6">
                             <div className="w-full aspect-square bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
                                 {previewUrl ? (
                                     <img
@@ -133,49 +162,12 @@ export default function UploadPage() {
                                     />
                                 ) : (
                                     <div className="text-center p-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
-                                        <p className="text-gray-500 mt-2">No image selected</p>
+                                        <p className="text-gray-500 mt-4 text-lg">No image selected</p>
                                     </div>
                                 )}
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Details Section */}
-                    <Card className="shadow-lg">
-                        <CardHeader>
-                            <CardTitle>Image Details</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="description">Description</Label>
-                                <Textarea
-                                    id="description"
-                                    placeholder="Add a description for your image"
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    className="resize-none"
-                                    rows={4}
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="category">Category</Label>
-                                <Select value={category} onValueChange={setCategory}>
-                                    <SelectTrigger id="category" className="w-full">
-                                        <SelectValue placeholder="Select a category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="nature">Nature</SelectItem>
-                                        <SelectItem value="people">People</SelectItem>
-                                        <SelectItem value="urban">Urban</SelectItem>
-                                        <SelectItem value="animals">Animals</SelectItem>
-                                        <SelectItem value="abstract">Abstract</SelectItem>
-                                        <SelectItem value="other">Other</SelectItem>
-                                    </SelectContent>
-                                </Select>
                             </div>
                         </CardContent>
                     </Card>
