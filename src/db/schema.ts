@@ -19,20 +19,27 @@ export const userTable = pgTable("users", {
     created_at: timestamp().defaultNow(),
 });
 
-export const sessions = pgTable("sessions", {
-    session_id: serial().primaryKey(),
-    user_id: integer().references(() => userTable.id).notNull(),
-    created_at: timestamp().defaultNow(),
-    expires_at: timestamp().notNull(),
-})
+// export const sessions = pgTable("sessions", {
+//     session_id: serial().primaryKey(),
+//     user_id: integer().references(() => userTable.id).notNull(),
+//     created_at: timestamp().defaultNow(),
+//     expires_at: timestamp().notNull(),
+// })
 
 export const photos = pgTable("photos", {
     id: serial().primaryKey(),
     title: varchar({ length: 255 }),
+    description: text(),
+    user_id: integer().references(() => userTable.id).notNull(),
     file_path: text(),
+    category_id: integer().references(() => categories.id).notNull(),
     views: integer().default(0),
     likes: integer().default(0),
     uploaded_at: timestamp().defaultNow(),
-    user_id: integer()
+})
+
+export const categories = pgTable("categories", {
+    id: serial().primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
 })
 

@@ -32,7 +32,7 @@ export default async function Navbar() {
                 </div>
                 {/* Login/User buttons */}
                 {session ?
-                    <div className="flex-shrink-0 items-center flex gap-4" >
+                    <div className="flex-shrink-0 items-center flex gap-4 m-4" >
                         <DropdownMenu modal={false}>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="px-4 py-2 text-sm font-medium">
@@ -48,7 +48,7 @@ export default async function Navbar() {
                                     await logout()
                                 }}>
                                     <DropdownMenuItem >
-                                        <button >
+                                        <button className="flex items-center w-full">
                                             <LogOut className="mr-2 h-4 w-4" />
                                             <span>Log out</span>
                                         </button>

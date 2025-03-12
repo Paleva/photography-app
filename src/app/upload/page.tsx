@@ -23,6 +23,7 @@ export default function UploadPage() {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [description, setDescription] = useState('')
     const [category, setCategory] = useState('')
+    const [validationError, setValidationError] = useState<string | null>(null)
 
     // Generate preview URL when file changes
     useEffect(() => {
@@ -42,7 +43,17 @@ export default function UploadPage() {
 
     const upload = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (!file) return
+        setValidationError(null)
+
+        if (!file) {
+            setValidationError("Please select a file")
+            return
+        }
+
+        if (!category) {
+            setValidationError("Please select a category")
+            return
+        }
 
         setPending(true)
         setUploadSuccess(false)
@@ -50,6 +61,10 @@ export default function UploadPage() {
         try {
             const data = new FormData()
             data.set('file', file)
+            data.set('category', category)
+            if (description) {
+                data.set('description', description)
+            }
 
             const res = await fetch('/api/upload', {
                 method: 'POST',
@@ -60,6 +75,7 @@ export default function UploadPage() {
             setUploadSuccess(true)
         } catch (error) {
             console.error(error)
+            setValidationError("Upload failed. Please try again.")
         } finally {
             setPending(false)
         }
@@ -86,8 +102,14 @@ export default function UploadPage() {
                         </CardHeader>
                         <CardContent className="p-6">
                             <form onSubmit={upload} className="space-y-6">
+                                {validationError && (
+                                    <div className="p-3 bg-red-50 text-red-700 rounded-md border border-red-200">
+                                        {validationError}
+                                    </div>
+                                )}
+
                                 <div className="space-y-2">
-                                    <Label htmlFor='file'>Choose a photo</Label>
+                                    <Label htmlFor='file'>Choose a photo <span className="text-red-500">*</span></Label>
                                     <Input
                                         id="file"
                                         type="file"
@@ -95,6 +117,7 @@ export default function UploadPage() {
                                         onChange={handleFileChange}
                                         accept="image/*"
                                         className='hover:bg-gray-100 focus:bg-gray-50 transition-colors'
+                                        required
                                     />
                                 </div>
 
@@ -111,9 +134,16 @@ export default function UploadPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="category">Category</Label>
-                                    <Select value={category} onValueChange={setCategory}>
-                                        <SelectTrigger id="category" className="w-full">
+                                    <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
+                                    <Select
+                                        value={category}
+                                        onValueChange={setCategory}
+                                        required
+                                    >
+                                        <SelectTrigger
+                                            id="category"
+                                            className={`w-full ${!category && 'border-red-200 focus:ring-red-500'}`}
+                                        >
                                             <SelectValue placeholder="Select a category" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -125,6 +155,7 @@ export default function UploadPage() {
                                             <SelectItem value="other">Other</SelectItem>
                                         </SelectContent>
                                     </Select>
+                                    {!category && <p className="text-sm text-red-500 mt-1">Category is required</p>}
                                 </div>
 
                                 <Button
