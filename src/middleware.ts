@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { decrypt } from '@/app/(public)/auth/session';
 import { cookies } from 'next/headers';
 
-const protectedRoutes = ['/home', '/upload'];
+const protectedRoutes = ['/home', '/upload', "/profile", '/user/liked', '/user/uploads'];
 // const publicRoutes = ['/login', '/register', '/'];
 
 export default async function middleware(req: NextRequest) {

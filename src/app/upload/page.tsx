@@ -13,7 +13,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import Navbar from '@/components/home/navbar';
+import { CameraIcon } from 'lucide-react';
+import Link from "next/link";
 
 export default function UploadPage() {
 
@@ -89,6 +90,11 @@ export default function UploadPage() {
     return (
         <>
             {/* <Navbar /> */}
+            <div className="fixed top-0 left-0 right-0 h-16 bg-gray-300 flex items-center px-2 pr-5">
+                <Link href='/' className='ml-7'>
+                    <CameraIcon color="black" size={32} className="ml-4" />
+                </Link>
+            </div>
             <div className="container mx-auto px-4 py-8 max-w-7xl mt-16">
                 <h1 className="text-3xl font-bold text-center mb-8 md:text-4xl">
                     Upload Your Photo
