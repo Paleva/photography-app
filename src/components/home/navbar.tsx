@@ -27,7 +27,7 @@ export default async function Navbar() {
                     <SidebarTrigger></SidebarTrigger>
 
                     <Link href="/" >
-                        <Camera color="black" size={32} className="ml-4" />
+                        <Camera color="black" size={35} className="ml-4" />
                     </Link>
                 </div>
                 {/* Login/User buttons */}
@@ -35,8 +35,8 @@ export default async function Navbar() {
                     <div className="flex-shrink-0 items-center flex gap-4" >
                         <DropdownMenu modal={false} >
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className="px-4 py-2 text-sm font-medium">
-                                    <UserCircleIcon className="mr-2" />
+                                <Button variant="outline" className="px-4 py-2 text-md font-medium ">
+                                    <UserCircleIcon />
                                     {username}
                                 </Button>
                             </DropdownMenuTrigger>

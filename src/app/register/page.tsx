@@ -1,16 +1,23 @@
 'use client'
 
 import { RegisterForm } from "@/components/ui/register-form"
+import { CameraIcon } from "lucide-react"
 import Image from 'next/image'
+import Link from "next/link"
 
 export default function AuthPage() {
     return (
         <div className="relative h-screen w-screen">
             {/* Background image that covers the entire screen */}
-            <div className="absolute inset-0 bg-black/30 z-10"></div>
-            <div className="absolute inset-0 z-0 bg-black">
+            {/* <div className="absolute inset-0 bg-black/30 z-10"></div> */}
+            <div className="absolute top-5 left-5 z-30 ml-7">
+                <Link href="/">
+                    <CameraIcon color="white" size={35} />
+                </Link>
+            </div>
+            <div className="absolute inset-0 z-0 bg-gray-900">
                 <Image
-                    src="/trees_vertical.jpg"
+                    src="/pexels-pixabay-257092.jpg"
                     fill
                     priority
                     alt="landscape"
