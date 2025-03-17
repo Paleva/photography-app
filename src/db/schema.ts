@@ -31,7 +31,7 @@ export const photos = pgTable("photos", {
     title: varchar({ length: 255 }),
     description: text(),
     user_id: integer().references(() => userTable.id).notNull(),
-    file_path: text(),
+    file_path: text().notNull(),
     category_id: integer().references(() => categories.id).notNull(),
     views: integer().default(0),
     likes: integer().default(0),

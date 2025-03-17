@@ -21,11 +21,11 @@ export async function POST(req: Request) {
 
     const originalName = file.name
     const buffer = Buffer.from(await file.arrayBuffer())
-    const filename = originalName + '==' + file.name.replace(file.name, randomUUID())
+    const filename = originalName + '_' + file.name.replace(file.name, randomUUID())
 
     try {
         await writeFile(
-            path.join(process.cwd(), '/public/' + filename + '.' + file.name.split('.').pop()),
+            path.join(process.cwd(), '/public/uploads/' + filename + '.' + file.name.split('.').pop()),
             buffer
         )
 
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
         await db.insert(photos).values({
             title: filename,
-            file_path: "/public/" + filename + '.' + file.name.split('.').pop(),
+            file_path: "/uploads/" + filename + '.' + file.name.split('.').pop(),
             user_id: user,
             description: description,
             category_id: category_id[0].id
