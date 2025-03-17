@@ -24,6 +24,7 @@ export default function UploadPage() {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [description, setDescription] = useState('')
     const [category, setCategory] = useState('')
+    const [title, setTitle] = useState('')
     const [validationError, setValidationError] = useState<string | null>(null)
 
     // Generate preview URL when file changes
@@ -56,6 +57,12 @@ export default function UploadPage() {
             return
         }
 
+        if (!title) {
+            setValidationError("Please enter a title")
+            return
+        }
+
+        setTitle(title.trim())
         setPending(true)
         setUploadSuccess(false)
 
@@ -63,6 +70,7 @@ export default function UploadPage() {
             const data = new FormData()
             data.set('file', file)
             data.set('category', category)
+            data.set('title', title)
             if (description) {
                 data.set('description', description)
             }
@@ -124,6 +132,18 @@ export default function UploadPage() {
                                         accept="image/*"
                                         className='hover:bg-gray-100 focus:bg-gray-50 transition-colors'
                                         required
+                                    />
+                                </div>
+
+                                <div className='space-y-2'>
+                                    <Label htmlFor='title'>Title<span className="text-red-500">*</span></Label>
+                                    <Input
+                                        id='title'
+                                        type='text'
+                                        placeholder='Add a title for your image'
+                                        className='hover:bg-gray-100 focus:bg-gray-50 transition-colors'
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        value={title}
                                     />
                                 </div>
 

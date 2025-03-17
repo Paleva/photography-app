@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { decrypt } from '@/app/(public)/auth/session';
+import { decrypt, verifySession } from '@/app/(public)/auth/session';
 import { cookies } from 'next/headers';
 
 const protectedRoutes = ['/home', '/upload', "/profile", '/user/liked', '/user/uploads'];
@@ -10,8 +10,8 @@ export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname;
     const isProtectedRoute = protectedRoutes.includes(path);
 
-    const cookie = (await cookies()).get('session')?.value;
-    const session = await decrypt(cookie);
+    // const cookie = (await cookies()).get('session')?.value;
+    const session = await verifySession();
 
     if (isProtectedRoute && !session?.userId) {
         return NextResponse.redirect(new URL('/login', req.nextUrl));

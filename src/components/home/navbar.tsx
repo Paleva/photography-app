@@ -15,7 +15,6 @@ import { SidebarTrigger } from '../ui/sidebar';
 export default async function Navbar() {
 
     const session = await getSession();
-    console.log(session)
     const username = session?.username as string
 
     return (

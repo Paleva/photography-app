@@ -9,11 +9,12 @@ import { decrypt } from '@/app/(public)/auth/session'
 
 export async function POST(req: Request) {
     const formData = await req.formData()
+    const title: string = formData.get('title') as string
     const file: File | null = formData.get('file') as unknown as File
     const category: string = formData.get('category') as string
     const description: string = formData.get('description') as string
 
-    console.log({ category, description })
+    console.log({ category, description, title })
 
     if (!file) {
         return NextResponse.json({ message: 'No file provided' }, { status: 400 })
@@ -40,7 +41,8 @@ export async function POST(req: Request) {
         const category_id: { id: number }[] = await db.select({ id: categories.id }).from(categories).where(eq(categories.name, category))
 
         await db.insert(photos).values({
-            title: filename,
+            title: title,
+            filename: filename,
             file_path: "/uploads/" + filename + '.' + file.name.split('.').pop(),
             user_id: user,
             description: description,

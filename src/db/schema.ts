@@ -29,6 +29,7 @@ export const userTable = pgTable("users", {
 export const photos = pgTable("photos", {
     id: serial().primaryKey(),
     title: varchar({ length: 255 }),
+    filename: varchar({ length: 255 }),
     description: text(),
     user_id: integer().references(() => userTable.id).notNull(),
     file_path: text().notNull(),

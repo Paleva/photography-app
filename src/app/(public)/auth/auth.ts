@@ -79,7 +79,6 @@ export async function login(
     const { email, password } = validatedFields.data
 
     const userExists = await db.select().from(userTable).where(eq(userTable.email, email))
-    console.log(userExists)
 
     if (userExists.length < 1) {
         return {
