@@ -18,7 +18,7 @@ export function LikeButton({ postId, userId, initialLiked, initialLikes }: LikeB
     const [isLoading, setIsLoading] = useState(false)
 
     const handleLike = async () => {
-        if (!userId) return // Not logged in
+        if (userId === -1) return
 
         setIsLoading(true)
         try {
@@ -38,13 +38,13 @@ export function LikeButton({ postId, userId, initialLiked, initialLikes }: LikeB
     return (
         <Button
             variant="ghost"
-            size="sm"
+            size="lg"
             className="flex gap-2"
             onClick={handleLike}
             disabled={isLoading || !userId}
         >
             <Heart
-                size={20}
+                size={64}
                 fill={isLiked ? "currentColor" : "none"}
                 className={isLiked ? "text-red-500" : ""}
             />

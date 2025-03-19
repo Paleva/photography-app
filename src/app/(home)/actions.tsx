@@ -4,7 +4,8 @@ import { photos, db, userTable, likes } from '@/db/schema'
 import { eq, and, count } from 'drizzle-orm'
 import { imageSizeFromFile } from 'image-size/fromFile'
 import path from 'path'
-
+import { comments } from '@/db/schema'
+import { desc } from 'drizzle-orm'
 
 export async function countLikes(postId: number) {
     try {
@@ -17,11 +18,19 @@ export async function countLikes(postId: number) {
 
 
 export async function getLiked(user_id: number, photo_id: number) {
-    const liked = await db.select().from(likes).where(and(eq(likes.photo_id, photo_id), eq(likes.user_id, user_id)))
+    const liked = await db
+        .select()
+        .from(likes)
+        .where(
+            and(
+                eq(likes.photo_id, photo_id),
+                eq(likes.user_id, user_id)
+            )
+        )
     return liked.length > 0
 }
 
-export async function getPost(id: number) {
+export async function getPost(id: number, user_id: number) {
     try {
         const results = await db
             .select({
@@ -37,16 +46,16 @@ export async function getPost(id: number) {
             .limit(1);
 
         const { post, user } = results[0];
-        const liked = await getLiked(user.id, post.id)
+        const liked = await getLiked(user_id, post.id)
         const likes = await countLikes(post.id)
-        const file_path = path.join(process.cwd(), "/public", post.file_path);
-        const dimension = await imageSizeFromFile(file_path);
-        const isVertical = dimension.height > dimension.width;
+        const file_path = path.join(process.cwd(), "/public", post.file_path)
+        const dimension = await imageSizeFromFile(file_path)
+        const isVertical = dimension.height > dimension.width
 
-        return { post, user, isVertical, liked, likes };
+        return { post, user, isVertical, liked, likes }
     }
     catch (error) {
-        console.error('Error fetching post:', error);
+        console.error('Error fetching post:', error)
         return {
             post: {
                 id: -1,
@@ -67,7 +76,6 @@ export async function getPost(id: number) {
 
 export async function toggleLike(post_id: number, user_id: number) {
     try {
-        // Check if the user already liked the post
         const existingLike = await db.select()
             .from(likes)
             .where(
@@ -75,28 +83,80 @@ export async function toggleLike(post_id: number, user_id: number) {
                     eq(likes.photo_id, post_id),
                     eq(likes.user_id, user_id)
                 )
-            );
+            )
 
         if (existingLike.length > 0) {
-            // Delete the like if it exists
             await db.delete(likes)
                 .where(
                     and(
                         eq(likes.photo_id, post_id),
                         eq(likes.user_id, user_id)
                     )
-                );
-            return false; // Return false to indicate the post is now unliked
+                )
+            return false
         } else {
-            // Add a like if it doesn't exist
             await db.insert(likes).values({
                 photo_id: post_id,
                 user_id: user_id,
-            });
-            return true; // Return true to indicate the post is now liked
+            })
+            return true
         }
     } catch (error) {
-        console.error("Error toggling like:", error);
+        console.error("Error toggling like:", error)
+        return null
+    }
+}
+
+export async function getComments(postId: number) {
+    try {
+        const result = await db
+            .select({
+                id: comments.id,
+                content: comments.content,
+                created_at: comments.created_at,
+                user: {
+                    id: userTable.id,
+                    username: userTable.username
+                }
+            })
+            .from(comments)
+            .innerJoin(userTable, eq(comments.user_id, userTable.id))
+            .where(eq(comments.photo_id, postId))
+            .orderBy(desc(comments.created_at))
+
+        return result;
+    } catch (error) {
+        console.error("Error fetching comments:", error);
+        return [];
+    }
+}
+
+export async function addComment(postId: number, userId: number, content: string) {
+    try {
+        if (!content.trim() || userId === -1) return null;
+
+        const [result] = await db.insert(comments)
+            .values({
+                photo_id: postId,
+                user_id: userId,
+                content: content.trim(),
+                created_at: new Date()
+            })
+            .returning();
+
+        // Get the user info to return with the comment
+        const user = await db
+            .select({
+                id: userTable.id,
+                username: userTable.username
+            })
+            .from(userTable)
+            .where(eq(userTable.id, userId))
+            .limit(1);
+
+        return { ...result, user: user[0] };
+    } catch (error) {
+        console.error("Error adding comment:", error);
         return null;
     }
 }

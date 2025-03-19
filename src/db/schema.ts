@@ -44,3 +44,11 @@ export const likes = pgTable("likes", {
     created_at: timestamp("created_at").defaultNow(),
 });
 
+export const comments = pgTable("comments", {
+    id: serial("id").primaryKey(),
+    photo_id: integer("photo_id").notNull().references(() => photos.id, { onDelete: "cascade" }),
+    user_id: integer("user_id").notNull().references(() => userTable.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    created_at: timestamp("created_at").defaultNow()
+});
+

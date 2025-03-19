@@ -1,15 +1,15 @@
 import { Card, CardContent, CardDescription, CardFooter, CardTitle, CardHeader } from "@/components/ui/card"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { MessageCircle } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { verifySession } from "../(public)/auth/session"
 import { getPost } from "./actions"
-import { LikeButton } from "./like-button"
+// import { LikeButton } from "./like-button"
+// import { CommentButton } from "./comment-button"
+import { PostCardFooter } from "./postcard-footer"
 
 export async function PostCard({ id }: { id: number }) {
-    const { post, user, isVertical, liked, likes } = await getPost(id);
     const user_id = await verifySession()
+    const { post, user, isVertical, liked, likes } = await getPost(id, user_id.userId || -1);
     // console.log(liked, user_id, likes)
 
     if (post.id === -1) {
@@ -76,26 +76,22 @@ export async function PostCard({ id }: { id: number }) {
             </CardContent>
 
             <div className="p-4 flex-grow">
-                <CardTitle className="text-xl mb-2">{post.title}</CardTitle>
+                <a href="#" className="block">
+                    <CardTitle className="text-xl mb-2">{post.title}</CardTitle>
+                </a>
                 <CardDescription className="text-sm line-clamp-3">
                     {post.description}
                 </CardDescription>
             </div>
 
-            <CardFooter className="border-t p-4">
-                <div className="flex justify-between w-full">
-                    <LikeButton
-                        postId={post.id}
-                        userId={user_id.userId || -1}
-                        initialLiked={liked}
-                        initialLikes={likes || 0}
-                    />
-                    <Button variant="ghost" size="sm" className="flex gap-2">
-                        <MessageCircle size={20} /> <span>Comment</span>
-                    </Button>
-                </div>
-            </CardFooter>
+            <PostCardFooter
+                postId={post.id}
+                userId={user_id.userId || -1}
+                initialLiked={liked}
+                initialLikes={likes || 0}
+            />
         </Card >
 
     )
 }
+
