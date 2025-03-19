@@ -1,6 +1,5 @@
 'use server'
 
-import 'dotenv/config'
 import { SignupFormSchema, FormState, LoginFormSchema } from "./definitions"
 import { userTable, db } from "@/db/schema"
 import { eq } from "drizzle-orm"

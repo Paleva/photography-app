@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import Navbar from "../../components/home/navbar";
 import HomeSidebar from "../../components/home/sidebar";
 import React from "react";

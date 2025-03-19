@@ -1,4 +1,4 @@
-import { Camera, LogOut, UserCircleIcon } from 'lucide-react';
+import { Camera, UserCircleIcon } from 'lucide-react';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {

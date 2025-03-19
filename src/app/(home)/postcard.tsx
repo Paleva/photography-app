@@ -1,36 +1,39 @@
-'use server'
-
 import { Card, CardContent, CardDescription, CardFooter, CardTitle, CardHeader } from "@/components/ui/card"
 import Image from "next/image"
-import { Suspense } from "react"
-import Loading from "./loading"
 import { Button } from "@/components/ui/button"
-import { Heart, MessageCircle } from "lucide-react"
+import { MessageCircle } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { photos, db, categories, userTable } from '@/db/schema'
-import { eq } from 'drizzle-orm'
-import { imageSizeFromFile } from 'image-size/fromFile'
-import path from 'path'
-
-async function getPost(id: number) {
-    const posts = await db.select().from(photos).where(eq(photos.id, id)).limit(1)
-    const users = await db.select().from(userTable).where(eq(userTable.id, posts[0].user_id))
-
-    const post = posts[0]
-    const user = users[0]
-    const file_path = path.join(process.cwd(), "/public", post.file_path)
-    const dimension = await imageSizeFromFile(file_path)
-    const isVertical = dimension.height > dimension.width
-    return { post, user, isVertical }
-}
+import { verifySession } from "../(public)/auth/session"
+import { getPost } from "./actions"
+import { LikeButton } from "./like-button"
 
 export async function PostCard({ id }: { id: number }) {
-    const { post, user, isVertical } = await getPost(id);
+    const { post, user, isVertical, liked, likes } = await getPost(id);
+    const user_id = await verifySession()
+    // console.log(liked, user_id, likes)
+
+    if (post.id === -1) {
+        return (
+            <Card key={id} className="overflow-hidden flex flex-col h-full">
+                <CardHeader className="text-red-500 pb-2 text-2xl">Failed to fetch post</CardHeader>
+                <CardContent>
+                    <div className="w-full h-auto relative">
+                        <Image
+                            src={"/placeholder-error-image.png"}
+                            width={500}
+                            height={800}
+                            className="w-full h-auto object-cover"
+                            alt="post image"
+                            priority
+                        />
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    }
 
     return (
-
-        <Card className="overflow-hidden flex flex-col h-full">
-
+        <Card key={id} className="overflow-hidden flex flex-col h-full">
             <CardHeader className="pb-2">
                 <div className="flex items-center gap-3">
                     <Avatar>
@@ -81,15 +84,18 @@ export async function PostCard({ id }: { id: number }) {
 
             <CardFooter className="border-t p-4">
                 <div className="flex justify-between w-full">
-                    <Button variant="ghost" size="sm" className="flex gap-2">
-                        <Heart size={20} /> <span>Like</span>
-                    </Button>
+                    <LikeButton
+                        postId={post.id}
+                        userId={user_id.userId || -1}
+                        initialLiked={liked}
+                        initialLikes={likes || 0}
+                    />
                     <Button variant="ghost" size="sm" className="flex gap-2">
                         <MessageCircle size={20} /> <span>Comment</span>
                     </Button>
                 </div>
             </CardFooter>
-        </Card>
+        </Card >
 
     )
 }

@@ -1,11 +1,10 @@
-
-
 import { text, pgTable, varchar, serial, timestamp, integer } from 'drizzle-orm/pg-core'
 import { drizzle } from "drizzle-orm/postgres-js"
 
 if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not defined");
 }
+
 export const db = drizzle(process.env.DATABASE_URL);
 
 export const userTable = pgTable("users", {
@@ -19,12 +18,6 @@ export const userTable = pgTable("users", {
     created_at: timestamp().defaultNow(),
 });
 
-// export const sessions = pgTable("sessions", {
-//     session_id: serial().primaryKey(),
-//     user_id: integer().references(() => userTable.id).notNull(),
-//     created_at: timestamp().defaultNow(),
-//     expires_at: timestamp().notNull(),
-// })
 
 export const photos = pgTable("photos", {
     id: serial().primaryKey(),
@@ -43,4 +36,11 @@ export const categories = pgTable("categories", {
     id: serial().primaryKey(),
     name: varchar({ length: 255 }).notNull(),
 })
+
+export const likes = pgTable("likes", {
+    id: serial("id").primaryKey(),
+    user_id: integer("user_id").notNull().references(() => userTable.id, { onDelete: "cascade" }),
+    photo_id: integer("photo_id").notNull().references(() => photos.id, { onDelete: "cascade" }),
+    created_at: timestamp("created_at").defaultNow(),
+});
 
