@@ -1,0 +1,117 @@
+'use server'
+
+import { photos, db, userTable, likes } from '@/db/schema'
+import { eq } from 'drizzle-orm'
+import { imageSizeFromFile } from 'image-size/fromFile'
+import path from 'path'
+import { countLikes, getLiked } from './like-actions'
+
+export async function getAllPostsId(): Promise<number[]> {
+    try {
+        const results = await db.select({ id: photos.id }).from(photos)
+        const postIds = results.map((post) => post.id)
+        return postIds
+    } catch (error) {
+        console.error('Error fetching posts:', error)
+        return []
+    }
+}
+
+export async function getPostByUser(userId: number): Promise<any[]> {
+    try {
+        const results = await db
+            .select()
+            .from(photos)
+            .where(eq(photos.user_id, userId))
+            .limit(1)
+
+        return results
+    } catch (error) {
+        console.error('Error fetching posts:', error)
+        return []
+    }
+}
+
+export async function getPostsByUserId(userId: number): Promise<number[]> {
+    try {
+        const results = await db
+            .select({ id: photos.id })
+            .from(photos)
+            .where(eq(photos.user_id, userId))
+
+        const postIds = results.map((post) => post.id)
+        return postIds
+    } catch (error) {
+        console.error('Error fetching posts id:', error)
+        return []
+    }
+}
+
+
+/** 
+*   @param {number} userId is the id of the user
+*   @return {number} Ids of the posts that are liked by the user
+*/
+export async function getLikedPostId(userId: number): Promise<number[]> {
+    try {
+        const results = await db
+            .select()
+            .from(likes)
+            .where(eq(likes.user_id, userId))
+
+        const postIds = results.map((like) => like.photo_id)
+        return postIds
+    } catch (e) {
+        console.error("Failed fetching liked posts id" + e)
+        return []
+    }
+}
+
+/**
+ * @param {number} postId Id of the post to fetch
+ * @param {number} userId User id of the user who is fetching the post
+ * @returns The post with the given id
+ */
+export async function getPost(postId: number, userId: number) {
+    try {
+        const results = await db
+            .select({
+                post: photos,
+                user: {
+                    id: userTable.id,
+                    username: userTable.username
+                },
+            })
+            .from(photos)
+            .innerJoin(userTable, eq(photos.user_id, userTable.id))
+            .where(eq(photos.id, postId))
+            .limit(1);
+
+        const { post, user } = results[0];
+        const liked = await getLiked(userId, post.id)
+        const likesCount = await countLikes(post.id)
+        const dimension = await imageSizeFromFile(path.join(process.cwd(), "/public", post.file_path))
+        const isVertical = dimension.height > dimension.width
+
+        return { post, user, isVertical, liked, likesCount }
+    }
+    catch (error) {
+        console.error('Error fetching post:', error)
+        return {
+            post: {
+                id: -1,
+                file_path: '/placeholder-error-image.png',
+                title: 'Failed to fetch post',
+                description: 'This post failed to load. Please try again later.'
+            },
+            user: {
+                username: 'Unknown',
+                id: -1
+            },
+            isVertical: false,
+            liked: false,
+            likes: 0
+        }
+    }
+}
+

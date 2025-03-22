@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { addComment, getComments } from "../../app/actions/actions";
+import { addComment, getComments } from "../../app/actions/feed/comments-actions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function Comments({ postId, userId }: { postId: number, userId: number }) {

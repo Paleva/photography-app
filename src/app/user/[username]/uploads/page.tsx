@@ -1,5 +1,5 @@
 import { verifySession } from '@/app/(public)/auth/session'
-import { getPostsByUserId } from '@/app/actions/actions'
+import { getPostsByUserId } from '@/app/actions/feed/actions'
 import { PostCard } from '@/components/feed/postcard'
 import Loading from '@/app/(home)/loading'
 import styles from '@/styles/masonry.module.css'

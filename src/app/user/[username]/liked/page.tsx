@@ -2,7 +2,7 @@ import Loading from "@/app/(home)/loading"
 import { PostCard } from "./postcard"
 import styles from "@/styles/masonry.module.css"
 import { Suspense } from "react"
-import { getLikedPostId } from "@/app/actions/actions"
+import { getLikedPostId } from "@/app/actions/feed/actions"
 import { verifySession } from "@/app/(public)/auth/session"
 
 export default async function LikedPage({ params }: { params: { user: string } }) {

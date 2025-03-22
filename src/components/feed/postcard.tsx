@@ -1,17 +1,14 @@
-import { Card, CardContent, CardDescription, CardFooter, CardTitle, CardHeader } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardTitle, CardHeader } from "@/components/ui/card"
 import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { verifySession } from "../../app/(public)/auth/session"
-import { getPost } from "../../app/actions/actions"
-// import { LikeButton } from "./like-button"
-// import { CommentButton } from "./comment-button"
+import { getPost } from "../../app/actions/feed/actions"
 import { PostCardFooter } from "./postcard-footer"
 import Link from "next/link"
 
 export async function PostCard({ id }: { id: number }) {
     const user_id = await verifySession()
-    const { post, user, isVertical, liked, likes } = await getPost(id, user_id.userId || -1);
-    // console.log(liked, user_id, likes)
+    const { post, user, isVertical, liked, likesCount } = await getPost(id, user_id.userId || -1);
 
     if (post.id === -1) {
         return (
@@ -91,7 +88,7 @@ export async function PostCard({ id }: { id: number }) {
                 postId={post.id}
                 userId={user_id.userId || -1}
                 initialLiked={liked}
-                initialLikes={likes || 0}
+                initialLikes={likesCount || 0}
             />
         </Card >
 

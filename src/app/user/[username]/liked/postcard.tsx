@@ -1,14 +1,14 @@
 import { Card, CardContent, CardDescription, CardFooter, CardTitle, CardHeader } from "@/components/ui/card"
 import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { verifySession } from "../../(public)/auth/session"
-import { getLikedPost } from "@/app/actions/actions"
+import { verifySession } from "../../../(public)/auth/session"
+import { getPost } from "@/app/actions/feed/actions"
 import { PostCardFooter } from "@/components/feed/postcard-footer"
 import Link from "next/link"
 
 export async function PostCard({ id }: { id: number }) {
     const user_id = await verifySession()
-    const { post, user, isVertical, liked, likesCount } = await getLikedPost(id, user_id.userId || -1);
+    const { post, user, isVertical, liked, likesCount } = await getPost(id, user_id.userId || -1);
     // console.log(liked, user_id, likes)
 
     if (post.id === -1) {

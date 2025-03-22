@@ -2,11 +2,12 @@ import { Suspense } from 'react'
 import { PostCard } from '../../components/feed/postcard'
 import Loading from './loading'
 import styles from '@/styles/masonry.module.css'
-import { getAllPostsId } from '../actions/actions'
+import { getAllPostsId } from '../actions/feed/actions'
 
 export default async function Page() {
 
     const postIds = await getAllPostsId()
+
     return (
         <div className={`p-4 ${styles.masonry}`}>
             {postIds.map((index) => (

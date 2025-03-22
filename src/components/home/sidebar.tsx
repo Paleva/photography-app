@@ -32,7 +32,7 @@ async function MainSection() {
         },
         {
             title: "Profile",
-            url: `/${user.username}`,
+            url: `/user/${user.username}`,
             icon: UserCircleIcon,
             auth: true
         }
@@ -68,13 +68,13 @@ async function PersonalSection() {
     const items = [
         {
             title: "Liked photos",
-            url: `/liked/${user.username}`,
+            url: `/user/${user.username}/liked`,
             icon: ThumbsUp,
             auth: true
         },
         {
             title: "Uploads",
-            url: `/uploads/${user.username}`,
+            url: `/user/${user.username}/uploads`,
             icon: Image,
             auth: true
         },

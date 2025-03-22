@@ -1,30 +1,61 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { decrypt, verifySession } from '@/app/(public)/auth/session';
+import { verifySession } from '@/app/(public)/auth/session';
 
-const protectedRoutes = ['/home', '/upload', "/profile", '/user/liked', '/user/uploads'];
+const publicRoutes = ['/login', '/register', '/'];
+const protectedRoutes = ['/upload'];
+const userRoute = ['/user']
 // const publicRoutes = ['/login', '/register', '/'];
 
 export default async function middleware(req: NextRequest) {
-
     const path = req.nextUrl.pathname;
+    console.log("\nPATH:\n" + path)
+
+    if (publicRoutes.some(route => path === route || path.startsWith(`${route}?`))) {
+        return NextResponse.next();
+    }
+
     const isProtectedRoute = protectedRoutes.includes(path);
+    const isUserRoute = userRoute.some(route => path.startsWith(route));
 
-    const cookie = (await cookies()).get('session')?.value;
-    // const session = await verifySession();
-    const session = await decrypt(cookie);
+    const session = await verifySession();
 
-    if (isProtectedRoute && !session?.userId) {
-        return NextResponse.redirect(new URL('/login', req.nextUrl));
+    if (isProtectedRoute && !session.isAuth) {
+        return NextResponse.redirect(new URL('/login', req.nextUrl))
+    }
+
+    if (isUserRoute) {
+        if (!session.isAuth) {
+            return NextResponse.redirect(new URL('/login', req.nextUrl))
+        }
+        if (path.startsWith('/user/')) {
+            const pathParts = path.split('/');
+            if (pathParts.length >= 3) {
+                const username = pathParts[2];
+                if (username !== session.username) {
+                    return NextResponse.redirect(new URL('/login', req.nextUrl))
+                }
+            }
+        }
     }
 
     return NextResponse.next();
 }
 
 
+// export const config = {
+//     matcher: [
+//         '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+//         '/(api/trpc)(.*)',
+//         '/user/:username*',
+//     ]
+// }
 export const config = {
     matcher: [
-        '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-        '/(api/trpc)(.*)'
+        // Static files and resources to ignore
+        '/((?!_next/static|_next/image|favicon.ico|public/).*)',
+        // API routes
+        '/api/:path*',
+        // User routes
+        '/user/:path*',
     ]
 }

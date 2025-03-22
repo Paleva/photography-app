@@ -16,7 +16,6 @@ export default async function Navbar({ sidebarTrigger }: { sidebarTrigger?: bool
 
     const session = await verifySession();
 
-
     return (
         <nav className="fixed top-0 left-0 right-0 h-16 bg-gray-300 flex items-center px-2 pr-5 z-50 " >
             <div className="flex items-center justify-between w-full" >
@@ -31,7 +30,7 @@ export default async function Navbar({ sidebarTrigger }: { sidebarTrigger?: bool
                     </Link>
                 </div>
                 {/* Login/User buttons */}
-                {session ?
+                {session.isAuth === true ?
                     <div className="flex-shrink-0 items-center flex gap-4" >
                         <DropdownMenu modal={false} >
                             <DropdownMenuTrigger asChild>
