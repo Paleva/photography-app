@@ -6,45 +6,101 @@ import { imageSizeFromFile } from 'image-size/fromFile'
 import path from 'path'
 import { comments } from '@/db/schema'
 
+export async function getAllPostsId(): Promise<number[]> {
+    try {
+        const results = await db.select({ id: photos.id }).from(photos)
+        const postIds = results.map((post) => post.id)
+        return postIds
+    } catch (error) {
+        console.error('Error fetching posts:', error)
+        return []
+    }
 
-export async function countLikes(postId: number) {
+}
+
+
+export async function getPostByUser(userId: number): Promise<any[]> {
+    try {
+        const results = await db
+            .select()
+            .from(photos)
+            .where(eq(photos.user_id, userId))
+            .limit(1)
+
+        return results
+    } catch (error) {
+        console.error('Error fetching posts:', error)
+        return []
+    }
+}
+
+export async function getPostsByUserId(userId: number): Promise<number[]> {
+    try {
+        const results = await db
+            .select({ id: photos.id })
+            .from(photos)
+            .where(eq(photos.user_id, userId))
+
+        const postIds = results.map((post) => post.id)
+        return postIds
+    } catch (error) {
+        console.error('Error fetching posts id:', error)
+        return []
+    }
+}
+
+/**
+ * @param postId Id of the post for which the likes are counted
+ * @returns {number} Number of likes for the post
+ */
+export async function countLikes(postId: number): Promise<number> {
     try {
         const likeCount = await db.select({ count: count() }).from(likes).where(eq(likes.photo_id, postId))
         return likeCount[0].count
     } catch (e) {
         console.error(e)
+        return 0
     }
 }
 
-
-export async function getLiked(user_id: number, photo_id: number) {
+/**
+ * @param userId Id of the user which is used to check if the user liked the post
+ * @param photo_id Id of the post for which the like status is checked
+ * @returns {boolean} True if the user liked the post, false otherwise
+ */
+export async function getLiked(userId: number, photo_id: number): Promise<boolean> {
     const liked = await db
         .select()
         .from(likes)
         .where(
             and(
                 eq(likes.photo_id, photo_id),
-                eq(likes.user_id, user_id)
+                eq(likes.user_id, userId)
             )
         )
     return liked.length > 0
 }
 
-export async function getLikedPostId(user_id: number) {
+/** 
+*   @param {number} userId is the id of the user
+*   @return {number} Ids of the posts that are liked by the user
+*/
+export async function getLikedPostId(userId: number): Promise<number[]> {
     try {
         const results = await db
             .select()
             .from(likes)
-            .where(eq(likes.user_id, user_id))
+            .where(eq(likes.user_id, userId))
 
         const postIds = results.map((like) => like.photo_id)
         return postIds
     } catch (e) {
-        console.error(e)
+        console.error("Failed fetching liked posts id" + e)
+        return []
     }
 }
 
-export async function getLikedPost(id: number, user_id: number) {
+export async function getLikedPost(postId: number, userId: number) {
     try {
         const results = await db
             .select({
@@ -56,18 +112,18 @@ export async function getLikedPost(id: number, user_id: number) {
             })
             .from(photos)
             .innerJoin(userTable, eq(photos.user_id, userTable.id))
-            .where(eq(photos.id, id))
+            .where(eq(photos.id, postId))
             .limit(1)
 
         const { post, user } = results[0]
-        const liked = await getLiked(user_id, post.id)
+        const liked = await getLiked(userId, post.id)
         const likesCount = await countLikes(post.id)
         const dimension = await imageSizeFromFile(path.join(process.cwd(), "/public", post.file_path))
         const isVertical = dimension.height > dimension.width
 
         return { post, user, isVertical, liked, likesCount }
     } catch (e) {
-        console.error(e)
+        console.error("Error fetching liked post:" + e)
         return {
             post: {
                 id: -1,
@@ -86,7 +142,7 @@ export async function getLikedPost(id: number, user_id: number) {
     }
 }
 
-export async function getPost(id: number, user_id: number) {
+export async function getPost(postId: number, userId: number) {
     try {
         const results = await db
             .select({
@@ -98,14 +154,13 @@ export async function getPost(id: number, user_id: number) {
             })
             .from(photos)
             .innerJoin(userTable, eq(photos.user_id, userTable.id))
-            .where(eq(photos.id, id))
+            .where(eq(photos.id, postId))
             .limit(1);
 
         const { post, user } = results[0];
-        const liked = await getLiked(user_id, post.id)
+        const liked = await getLiked(userId, post.id)
         const likes = await countLikes(post.id)
-        const file_path = path.join(process.cwd(), "/public", post.file_path)
-        const dimension = await imageSizeFromFile(file_path)
+        const dimension = await imageSizeFromFile(path.join(process.cwd(), "/public", post.file_path))
         const isVertical = dimension.height > dimension.width
 
         return { post, user, isVertical, liked, likes }
@@ -130,14 +185,14 @@ export async function getPost(id: number, user_id: number) {
     }
 }
 
-export async function toggleLike(post_id: number, user_id: number) {
+export async function toggleLike(postId: number, userId: number) {
     try {
         const existingLike = await db.select()
             .from(likes)
             .where(
                 and(
-                    eq(likes.photo_id, post_id),
-                    eq(likes.user_id, user_id)
+                    eq(likes.photo_id, postId),
+                    eq(likes.user_id, userId)
                 )
             )
 
@@ -145,15 +200,15 @@ export async function toggleLike(post_id: number, user_id: number) {
             await db.delete(likes)
                 .where(
                     and(
-                        eq(likes.photo_id, post_id),
-                        eq(likes.user_id, user_id)
+                        eq(likes.photo_id, postId),
+                        eq(likes.user_id, userId)
                     )
                 )
             return false
         } else {
             await db.insert(likes).values({
-                photo_id: post_id,
-                user_id: user_id,
+                photo_id: postId,
+                user_id: userId,
             })
             return true
         }
