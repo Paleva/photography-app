@@ -1,11 +1,12 @@
 import { Card, CardContent, CardDescription, CardFooter, CardTitle, CardHeader } from "@/components/ui/card"
 import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { verifySession } from "../(public)/auth/session"
-import { getPost } from "./actions"
+import { verifySession } from "../../app/(public)/auth/session"
+import { getPost } from "../../app/actions/actions"
 // import { LikeButton } from "./like-button"
 // import { CommentButton } from "./comment-button"
 import { PostCardFooter } from "./postcard-footer"
+import Link from "next/link"
 
 export async function PostCard({ id }: { id: number }) {
     const user_id = await verifySession()
@@ -42,7 +43,9 @@ export async function PostCard({ id }: { id: number }) {
                     </Avatar>
                     <div>
                         <p className="font-medium">{user.username}</p>
-                        <p className="text-sm text-muted-foreground">@{user.username}</p>
+                        <Link href="/[username]" as={`/${user.username}`}>
+                            <p className="text-sm text-muted-foreground">@{user.username}</p>
+                        </Link>
                     </div>
                 </div>
             </CardHeader>

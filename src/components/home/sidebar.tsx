@@ -1,5 +1,5 @@
-'use client'
 
+import { verifySession } from '@/app/(public)/auth/session'
 import { Separator } from '@/components/ui/separator'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { HomeIcon, Image, ImagePlus, ThumbsUp, UserCircleIcon } from 'lucide-react'
@@ -18,7 +18,11 @@ export default function HomeSidebar() {
 }
 
 
-function MainSection() {
+async function MainSection() {
+
+
+    const user = await verifySession()
+
 
     const items = [
         {
@@ -28,7 +32,7 @@ function MainSection() {
         },
         {
             title: "Profile",
-            url: "/profile",
+            url: `/${user.username}`,
             icon: UserCircleIcon,
             auth: true
         }
@@ -43,7 +47,7 @@ function MainSection() {
                             <SidebarMenuButton tooltip={item.title}
                                 asChild
                                 isActive={false}
-                                onClick={() => { }}>
+                            >
                                 <Link href={item.url} className="flex items-center gap-4">
                                     <item.icon />
                                     <span className='text-md font-medium'>{item.title}</span>
@@ -57,18 +61,20 @@ function MainSection() {
     )
 }
 
-function PersonalSection() {
+async function PersonalSection() {
+
+    const user = await verifySession()
 
     const items = [
         {
             title: "Liked photos",
-            url: '/user/liked',
+            url: `/liked/${user.username}`,
             icon: ThumbsUp,
             auth: true
         },
         {
             title: "Uploads",
-            url: '/user/uploads',
+            url: `/uploads/${user.username}`,
             icon: Image,
             auth: true
         },
@@ -91,7 +97,7 @@ function PersonalSection() {
                             <SidebarMenuButton tooltip={item.title}
                                 asChild
                                 isActive={false}
-                                onClick={() => { }}>
+                            >
                                 <Link href={item.url} className="flex items-center gap-4">
                                     <item.icon />
                                     <span className='text-sm'>{item.title}</span>

@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { PostCard } from './postcard'
+import { PostCard } from '../../components/feed/postcard'
 import Loading from './loading'
 import styles from '@/styles/masonry.module.css'
 

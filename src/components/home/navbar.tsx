@@ -8,23 +8,24 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { logout, getSession } from "@/app/(public)/auth/session";
+import { logout, verifySession } from "@/app/(public)/auth/session";
 import { SidebarTrigger } from '../ui/sidebar';
 
 
-export default async function Navbar() {
+export default async function Navbar({ sidebarTrigger }: { sidebarTrigger?: boolean }) {
 
-    const session = await getSession();
-    const username = session?.username as string
+    const session = await verifySession();
+
 
     return (
         <nav className="fixed top-0 left-0 right-0 h-16 bg-gray-300 flex items-center px-2 pr-5 z-50 " >
             <div className="flex items-center justify-between w-full" >
                 {/* Menu and Logo */}
                 < div className="flex items-center flex-shrink-0" >
-
-                    <SidebarTrigger></SidebarTrigger>
-
+                    {sidebarTrigger ?
+                        <SidebarTrigger></SidebarTrigger>
+                        : null
+                    }
                     <Link href="/" >
                         <Camera color="black" size={35} className="ml-4" />
                     </Link>
@@ -36,11 +37,13 @@ export default async function Navbar() {
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="px-4 py-2 text-md font-medium ">
                                     <UserCircleIcon />
-                                    {username}
+                                    {session.username}
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem className="text-lg">Profile</DropdownMenuItem>
+                                <Link href='/[username]' as={`/${session.username}`}>
+                                    <DropdownMenuItem className="text-lg">Profile</DropdownMenuItem>
+                                </Link>
                                 <DropdownMenuItem className="text-lg">Settings</DropdownMenuItem>
                                 <form action={async () => {
                                     "use server"

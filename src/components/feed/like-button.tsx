@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Heart } from "lucide-react"
 import { useState } from "react"
-import { toggleLike } from "./actions"
+import { toggleLike } from "../../app/actions/actions"
 
 interface LikeButtonProps {
     postId: number

@@ -1,11 +1,11 @@
 'use server'
 
 import { photos, db, userTable, likes } from '@/db/schema'
-import { eq, and, count } from 'drizzle-orm'
+import { eq, and, count, asc } from 'drizzle-orm'
 import { imageSizeFromFile } from 'image-size/fromFile'
 import path from 'path'
 import { comments } from '@/db/schema'
-import { desc } from 'drizzle-orm'
+
 
 export async function countLikes(postId: number) {
     try {
@@ -28,6 +28,62 @@ export async function getLiked(user_id: number, photo_id: number) {
             )
         )
     return liked.length > 0
+}
+
+export async function getLikedPostId(user_id: number) {
+    try {
+        const results = await db
+            .select()
+            .from(likes)
+            .where(eq(likes.user_id, user_id))
+
+        const postIds = results.map((like) => like.photo_id)
+        return postIds
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+export async function getLikedPost(id: number, user_id: number) {
+    try {
+        const results = await db
+            .select({
+                post: photos,
+                user: {
+                    id: userTable.id,
+                    username: userTable.username
+                }
+            })
+            .from(photos)
+            .innerJoin(userTable, eq(photos.user_id, userTable.id))
+            .where(eq(photos.id, id))
+            .limit(1)
+
+        const { post, user } = results[0]
+        const liked = await getLiked(user_id, post.id)
+        const likesCount = await countLikes(post.id)
+        const dimension = await imageSizeFromFile(path.join(process.cwd(), "/public", post.file_path))
+        const isVertical = dimension.height > dimension.width
+
+        return { post, user, isVertical, liked, likesCount }
+    } catch (e) {
+        console.error(e)
+        return {
+            post: {
+                id: -1,
+                file_path: '/placeholder-error-image.png',
+                title: 'Failed to fetch post',
+                description: 'This post failed to load. Please try again later.'
+            },
+            user: {
+                username: 'Unknown',
+                id: -1
+            },
+            isVertical: false,
+            liked: false,
+            likesCount: 0
+        }
+    }
 }
 
 export async function getPost(id: number, user_id: number) {
@@ -122,7 +178,7 @@ export async function getComments(postId: number) {
             .from(comments)
             .innerJoin(userTable, eq(comments.user_id, userTable.id))
             .where(eq(comments.photo_id, postId))
-            .orderBy(desc(comments.created_at))
+            .orderBy(asc(comments.created_at))
 
         return result;
     } catch (error) {
@@ -140,7 +196,6 @@ export async function addComment(postId: number, userId: number, content: string
                 photo_id: postId,
                 user_id: userId,
                 content: content.trim(),
-                created_at: new Date()
             })
             .returning();
 

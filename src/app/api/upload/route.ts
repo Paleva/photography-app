@@ -4,8 +4,8 @@ import { writeFile } from 'fs/promises'
 import { randomUUID } from 'crypto'
 import { photos, db, categories } from '@/db/schema'
 import { eq } from 'drizzle-orm'
-import { cookies } from 'next/headers'
-import { decrypt } from '@/app/(public)/auth/session'
+
+import { verifySession } from '@/app/(public)/auth/session'
 
 export async function POST(req: Request) {
     const formData = await req.formData()
@@ -30,10 +30,10 @@ export async function POST(req: Request) {
             buffer
         )
 
-        const cookie = (await cookies()).get('session')?.value;
-        const session = await decrypt(cookie);
 
-        if (!session) {
+        const session = await verifySession()
+
+        if (session.isAuth === false) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         const user = session.userId as number

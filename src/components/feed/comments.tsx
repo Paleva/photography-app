@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { addComment, getComments } from "./actions";
+import { addComment, getComments } from "../../app/actions/actions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function Comments({ postId, userId }: { postId: number, userId: number }) {
@@ -42,7 +42,7 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
         <div className="border-t pt-4 px-4 pb-2">
             <h3 className="font-medium mb-2">Comments</h3>
 
-            <ScrollArea className="h-[200px] mb-4">
+            <ScrollArea className="h-[200px] ">
                 {isLoading ? (
                     <p className="text-sm text-muted-foreground">Loading comments...</p>
                 ) : comments.length === 0 ? (
@@ -70,7 +70,7 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
                 )}
             </ScrollArea>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 p-2 m-2">
                 <Input
                     placeholder="Add a comment..."
                     value={comment}
