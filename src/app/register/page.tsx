@@ -1,5 +1,4 @@
 'use client'
-
 import { RegisterForm } from "@/components/ui/register-form"
 import { CameraIcon } from "lucide-react"
 import Image from 'next/image'
@@ -17,7 +16,7 @@ export default function AuthPage() {
             </div>
             <div className="absolute inset-0 z-0 bg-gray-900">
                 <Image
-                    src="/pexels-pixabay-257092.jpg"
+                    src="/register.jpg"
                     fill
                     priority
                     alt="landscape"

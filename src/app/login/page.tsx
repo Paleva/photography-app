@@ -18,7 +18,7 @@ export default function AuthPage() {
             </div>
             <div className="absolute inset-0 z-0 bg-gray-800">
                 <Image
-                    src="/landscape.jpg"
+                    src="/login.jpg"
                     fill
                     priority
                     alt="landscape"

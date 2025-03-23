@@ -40,7 +40,6 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
 
     return (
         <div className="border-t pt-4 px-4 pb-2">
-            <h3 className="font-medium mb-2">Comments</h3>
 
             <ScrollArea className="h-[200px] ">
                 {isLoading ? (

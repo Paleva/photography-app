@@ -1,7 +1,7 @@
 'use client'
 
 import { Comments } from "./comments"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
 
@@ -16,6 +16,7 @@ export function CommentSection({ postId, userId, show, onClose }: CommentSection
     // For small screens, use a dialog (modal)
     return (
         <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
+            <DialogTitle> Comments </DialogTitle>
             <DialogContent className="sm:max-w-md">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="font-medium">Comments</h3>
