@@ -1,8 +1,11 @@
+import 'server-only'
+
 import { NextResponse } from 'next/server'
 import path from 'path'
 import { writeFile } from 'fs/promises'
 import { randomUUID } from 'crypto'
-import { photos, db, categories } from '@/db/schema'
+import { posts, db, categories } from '@/db/schema'
+import { imageSizeFromFile } from 'image-size/fromFile'
 import { eq } from 'drizzle-orm'
 
 import { verifySession } from '@/app/(public)/auth/session'
@@ -14,7 +17,6 @@ export async function POST(req: Request) {
     const category: string = formData.get('category') as string
     const description: string = formData.get('description') as string
 
-    console.log({ category, description, title })
 
     if (!file) {
         return NextResponse.json({ message: 'No file provided' }, { status: 400 })
@@ -40,12 +42,16 @@ export async function POST(req: Request) {
 
         const category_id: { id: number }[] = await db.select({ id: categories.id }).from(categories).where(eq(categories.name, category))
 
-        await db.insert(photos).values({
+        const dimension = await imageSizeFromFile(path.join(process.cwd(), "/public", filename))
+        const isVertical = dimension.height > dimension.width
+
+        await db.insert(posts).values({
             title: title,
             filename: filename,
             file_path: "/uploads/" + filename + '.' + file.name.split('.').pop(),
             user_id: user,
             description: description,
+            isvertical: isVertical,
             category_id: category_id[0].id
         })
 

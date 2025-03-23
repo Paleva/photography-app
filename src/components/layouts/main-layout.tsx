@@ -3,11 +3,9 @@ import Navbar from "@/components/home/navbar";
 import HomeSidebar from "@/components/home/sidebar";
 import React from "react";
 
-interface HomeLayoutProps {
-    children: React.ReactNode;
-}
 
-export default function HomeLayout({ children }: HomeLayoutProps) {
+
+export default function MainLayout({ children }: { children: React.ReactNode }) {
     return (
         <SidebarProvider >
             <div className='w-full'>

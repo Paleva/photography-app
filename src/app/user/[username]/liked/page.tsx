@@ -1,5 +1,5 @@
 import Loading from "@/app/(home)/loading"
-import { PostCard } from "./postcard"
+import { PostCard } from "@/components/feed/postcard"
 import styles from "@/styles/masonry.module.css"
 import { Suspense } from "react"
 import { getLikedPostId } from "@/app/actions/feed/actions"

@@ -35,7 +35,9 @@ export async function PostCard({ id }: { id: number }) {
             <CardHeader className="pb-2">
                 <div className="flex items-center gap-3">
                     <Avatar>
-                        <AvatarImage src={`https://i.pravatar.cc/150?u=${user.id}`} alt={user.username} />
+                        {'profile_picture' in user && user.profile_picture ? (
+                            <AvatarImage src={user.profile_picture} alt={user.username} />
+                        ) : null}
                         <AvatarFallback>{user.username.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>

@@ -19,24 +19,24 @@ export default async function middleware(req: NextRequest) {
 
     const session = await verifySession();
 
-    if (isProtectedRoute && !session.isAuth) {
+    if ((isProtectedRoute || isUserRoute) && !session.isAuth) {
         return NextResponse.redirect(new URL('/login', req.nextUrl))
     }
 
-    if (isUserRoute) {
-        if (!session.isAuth) {
-            return NextResponse.redirect(new URL('/login', req.nextUrl))
-        }
-        if (path.startsWith('/user/')) {
-            const pathParts = path.split('/');
-            if (pathParts.length >= 3) {
-                const username = pathParts[2];
-                if (username !== session.username) {
-                    return NextResponse.redirect(new URL('/login', req.nextUrl))
-                }
-            }
-        }
-    }
+    // if (isUserRoute) {
+    //     if (!session.isAuth) {
+    //         return NextResponse.redirect(new URL('/login', req.nextUrl))
+    //     }
+    //     if (path.startsWith('/user/')) {
+    //         const pathParts = path.split('/');
+    //         if (pathParts.length >= 3) {
+    //             const username = pathParts[2];
+    //             if (username !== session.username) {
+    //                 return NextResponse.redirect(new URL('/login', req.nextUrl))
+    //             }
+    //         }
+    //     }
+    // }
 
     return NextResponse.next();
 }

@@ -1,8 +1,5 @@
-interface UploadLayoutProps {
-    children: React.ReactNode;
-}
 
-export default function UploadLayout({ children }: UploadLayoutProps) {
+export default function UploadLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className="w-full">
             <div className="flex min-h-screen">

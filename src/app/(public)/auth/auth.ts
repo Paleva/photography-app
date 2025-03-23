@@ -1,7 +1,7 @@
 'use server'
 
 import { SignupFormSchema, FormState, LoginFormSchema } from "./definitions"
-import { userTable, db } from "@/db/schema"
+import { users, db } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import bcrypt from "bcrypt"
 import { createSession } from "./session"
@@ -25,7 +25,7 @@ export async function register(
 
     const { username, email, password } = validatedFields.data
 
-    const userExists = await db.select().from(userTable).where(eq(userTable.email, email))
+    const userExists = await db.select().from(users).where(eq(users.email, email))
 
     if (userExists.length > 0) {
         return {
@@ -35,7 +35,7 @@ export async function register(
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    const data = await db.insert(userTable).values({
+    const data = await db.insert(users).values({
         username: username,
         email: email,
         password: hashedPassword,
@@ -77,7 +77,7 @@ export async function login(
 
     const { email, password } = validatedFields.data
 
-    const userExists = await db.select().from(userTable).where(eq(userTable.email, email))
+    const userExists = await db.select().from(users).where(eq(users.email, email))
 
     if (userExists.length < 1) {
         return {

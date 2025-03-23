@@ -1,6 +1,6 @@
 'use server'
 
-import { photos, db, userTable, likes } from '@/db/schema'
+import { posts, db, users, likes } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { imageSizeFromFile } from 'image-size/fromFile'
 import path from 'path'
@@ -8,7 +8,7 @@ import { countLikes, getLiked } from './like-actions'
 
 export async function getAllPostsId(): Promise<number[]> {
     try {
-        const results = await db.select({ id: photos.id }).from(photos)
+        const results = await db.select({ id: posts.id }).from(posts)
         const postIds = results.map((post) => post.id)
         return postIds
     } catch (error) {
@@ -21,8 +21,8 @@ export async function getPostByUser(userId: number): Promise<any[]> {
     try {
         const results = await db
             .select()
-            .from(photos)
-            .where(eq(photos.user_id, userId))
+            .from(posts)
+            .where(eq(posts.user_id, userId))
             .limit(1)
 
         return results
@@ -35,9 +35,9 @@ export async function getPostByUser(userId: number): Promise<any[]> {
 export async function getPostsByUserId(userId: number): Promise<number[]> {
     try {
         const results = await db
-            .select({ id: photos.id })
-            .from(photos)
-            .where(eq(photos.user_id, userId))
+            .select({ id: posts.id })
+            .from(posts)
+            .where(eq(posts.user_id, userId))
 
         const postIds = results.map((post) => post.id)
         return postIds
@@ -59,7 +59,7 @@ export async function getLikedPostId(userId: number): Promise<number[]> {
             .from(likes)
             .where(eq(likes.user_id, userId))
 
-        const postIds = results.map((like) => like.photo_id)
+        const postIds = results.map((like) => like.post_id)
         return postIds
     } catch (e) {
         console.error("Failed fetching liked posts id" + e)
@@ -70,21 +70,22 @@ export async function getLikedPostId(userId: number): Promise<number[]> {
 /**
  * @param {number} postId Id of the post to fetch
  * @param {number} userId User id of the user who is fetching the post
- * @returns The post with the given id
+ * @returns The post and the associated info for it
  */
 export async function getPost(postId: number, userId: number) {
     try {
         const results = await db
             .select({
-                post: photos,
+                post: posts,
                 user: {
-                    id: userTable.id,
-                    username: userTable.username
+                    id: users.id,
+                    username: users.username,
+                    profile_picture: users.profile_picture,
                 },
             })
-            .from(photos)
-            .innerJoin(userTable, eq(photos.user_id, userTable.id))
-            .where(eq(photos.id, postId))
+            .from(posts)
+            .innerJoin(users, eq(posts.user_id, users.id))
+            .where(eq(posts.id, postId))
             .limit(1);
 
         const { post, user } = results[0];

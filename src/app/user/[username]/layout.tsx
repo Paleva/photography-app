@@ -1,6 +1,6 @@
 import MainLayout from "@/components/layouts/main-layout"
 
-export default function HomeLayout({ children }: { children: React.ReactNode }) {
+export default function UserLayout({ children }: { children: React.ReactNode }) {
     return (
         <MainLayout>
             {children}

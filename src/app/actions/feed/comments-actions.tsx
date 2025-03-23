@@ -1,6 +1,6 @@
 'use server'
 
-import { db, comments, userTable } from "@/db/schema";
+import { db, comments, users } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 
 export async function getComments(postId: number) {
@@ -8,16 +8,16 @@ export async function getComments(postId: number) {
         const result = await db
             .select({
                 id: comments.id,
-                content: comments.content,
+                content: comments.comment_text,
                 created_at: comments.created_at,
                 user: {
-                    id: userTable.id,
-                    username: userTable.username
+                    id: users.id,
+                    username: users.username
                 }
             })
             .from(comments)
-            .innerJoin(userTable, eq(comments.user_id, userTable.id))
-            .where(eq(comments.photo_id, postId))
+            .innerJoin(users, eq(comments.user_id, users.id))
+            .where(eq(comments.post_id, postId))
             .orderBy(asc(comments.created_at))
 
         return result;
@@ -33,20 +33,20 @@ export async function addComment(postId: number, userId: number, content: string
 
         const [result] = await db.insert(comments)
             .values({
-                photo_id: postId,
+                post_id: postId,
                 user_id: userId,
-                content: content.trim(),
+                comment_text: content.trim(),
             })
             .returning();
 
         // Get the user info to return with the comment
         const user = await db
             .select({
-                id: userTable.id,
-                username: userTable.username
+                id: users.id,
+                username: users.username
             })
-            .from(userTable)
-            .where(eq(userTable.id, userId))
+            .from(users)
+            .where(eq(users.id, userId))
             .limit(1);
 
         return { ...result, user: user[0] };
