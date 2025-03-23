@@ -46,6 +46,7 @@ export function PostCardFooter({ postId, userId, initialLiked, initialLikes }: P
                     postId={postId}
                     userId={userId}
                     show={showComments}
+                    onClose={toggleComments}
                 />
             </div>
 

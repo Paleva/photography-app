@@ -4,6 +4,7 @@ import styles from "@/styles/masonry.module.css"
 import { Suspense } from "react"
 import { getLikedPostId } from "@/app/actions/feed/actions"
 import { verifySession } from "@/app/(public)/auth/session"
+import { MasonryGrid } from "@/components/layouts/masonry-grid"
 
 export default async function LikedPage({ params }: { params: { user: string } }) {
 
@@ -27,14 +28,16 @@ export default async function LikedPage({ params }: { params: { user: string } }
     }
     console.log(postIds)
     return (
-        <div className={`p-4 ${styles.masonry}`}>
-            {postIds.map((index) => (
-                <div key={index} className={styles.masonryItem}>
-                    <Suspense fallback={<Loading />}>
-                        <PostCard id={index} />
-                    </Suspense>
-                </div>
-            ))}
+        <div className='p-4'>
+            <MasonryGrid>
+                {postIds.map((index) => (
+                    <div key={index} className="mb-6 min-h-[300px] hover:z-10 transition-all duration-300">
+                        <Suspense fallback={<Loading />}>
+                            <PostCard id={index} />
+                        </Suspense>
+                    </div>
+                ))}
+            </MasonryGrid>
         </div>
     )
 }
