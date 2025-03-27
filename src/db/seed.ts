@@ -517,16 +517,17 @@ const files = [
 
 async function seed() {
     await client.connect();
-    const hash = await bcrypt.hash("testtest", 10);
     // Insert Multiple Users
-    const userData = Array.from({ length: 50 }, (_, i) => ({
+    const userDataPromise = Array.from({ length: 50 }, async (_, i) => ({
         username: `User_${i + 1}`,
         email: `user${i + 1}@example.com`,
-        password: hash, // Assume all users have a hashed password
+        password: `${await bcrypt.hash("testtest", 10)}`,
         role: "User",
         profile_picture: `https://i.pravatar.cc/150?u=${i + 1}`,
         bio: "Photography lover"
     }));
+
+    const userData = await Promise.all(userDataPromise);
 
     const insertedUsers = await db.insert(users).values(userData).returning();
 

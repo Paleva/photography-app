@@ -28,10 +28,7 @@ export default async function UserPage({ params }: { params: { username: string 
             <Suspense fallback={<Loading />}>
                 <div className="flex justify-between items-center">
                     <UserCard profile_picture={user.profile_picture} username={user.username} />
-                    <Button variant="outline">Edit Profile</Button>
                 </div>
-
-                {/* <Bio bio={user.bio ?? ""} /> */}
 
                 {/* Profile Editor - This would typically be conditionally shown */}
                 <ProfileEditor
