@@ -116,3 +116,16 @@ export async function getPost(postId: number, userId: number) {
     }
 }
 
+
+export async function getUser(userId: number) {
+    try {
+        const results = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, userId))
+
+        return results[0]
+    } catch {
+        return null
+    }
+}
