@@ -98,6 +98,28 @@ export function ProfileEditor({
                                 <X className="h-4 w-4" />
                             </Button>
                         </div>
+                        <div className="flex-col junstify-between items-center">
+                            <Label htmlFor="new-password" className="block text-sm font-medium my-2">
+                                New password
+                            </Label>
+                            <Input
+                                id="new-password"
+                                type="password"
+                                placeholder="Enter current password"
+                                className="my-2"
+
+                            />
+                            <Label htmlFor="repeat-new-password" className="block text-sm font-medium my-2">
+                                Repeat new password
+                            </Label>
+                            <Input
+                                id="repeat-new-password"
+                                type="password"
+                                placeholder="Enter current password"
+                                className="my-2"
+                            />
+                            <Button className="my-2 w-full" variant='default'> Change password </Button>
+                        </div>
                     </DialogContent>
                 </Dialog>
                 <Button onClick={() => setEdit(false)} variant="outline">Cancel</Button>

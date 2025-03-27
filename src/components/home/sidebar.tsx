@@ -63,7 +63,7 @@ async function MainSection() {
 
 async function PersonalSection() {
 
-    const user = await verifySession()
+    let user = await verifySession()
 
     const items = [
         {

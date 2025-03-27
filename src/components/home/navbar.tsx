@@ -40,10 +40,9 @@ export default async function Navbar({ sidebarTrigger }: { sidebarTrigger?: bool
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <Link href='/[username]' as={`/${session.username}`}>
+                                <Link href='/user/[username]' as={`/user/${session.username}`}>
                                     <DropdownMenuItem className="text-lg">Profile</DropdownMenuItem>
                                 </Link>
-                                <DropdownMenuItem className="text-lg">Settings</DropdownMenuItem>
                                 <form action={async () => {
                                     "use server"
                                     await logout()
