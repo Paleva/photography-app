@@ -12,7 +12,7 @@ export default async function Page() {
         <div>
             <MasonryGrid>
                 {postIds.map((index) => (
-                    <div key={index} className="hover:z-10 transition-all duration-300">
+                    <div key={index} className="mb-6 hover:z-10 transition-all duration-300">
                         <Suspense fallback={<Loading />}>
                             <PostCard id={index} />
                         </Suspense>

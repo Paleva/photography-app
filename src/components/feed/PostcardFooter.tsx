@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { CardFooter } from "@/components/ui/card"
-import { LikeButton } from "./like-button"
-import { CommentButton } from "./comment-button"
-import { CommentSection } from "./comment-section"
+import { LikeButton } from "./LikeButton"
+import { CommentButton } from "./CommentButton"
+import { CommentSection } from "./CommentSection"
 
 interface PostCardFooterProps {
     postId: number

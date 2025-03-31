@@ -2,11 +2,11 @@ import { Suspense } from "react"
 import Loading from "./loading"
 import { verifySession } from "@/app/(public)/auth/session"
 import { getUser } from "@/app/actions/feed/actions"
-import { UserCard } from "@/components/profile/user-card"
+import { UserCard } from "@/components/profile/UserCard"
 import { ProfileEditor } from "@/components/profile/ProfileEditor"
 
 export default async function UserPage({ params }: { params: { username: string } }) {
-    const { username } = await params
+
     const session = await verifySession()
 
     if (!session.userId || !session.isAuth) {

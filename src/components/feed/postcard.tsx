@@ -3,7 +3,7 @@ import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { verifySession } from "../../app/(public)/auth/session"
 import { getPost } from "../../app/actions/feed/actions"
-import { PostCardFooter } from "./postcard-footer"
+import { PostCardFooter } from "./PostcardFooter"
 import Link from "next/link"
 
 export async function PostCard({ id }: { id: number }) {

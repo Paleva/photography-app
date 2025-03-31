@@ -61,7 +61,6 @@ export async function postProfileInfo(
             const result = await db.update(users).set({ username: username }).where(eq(users.id, userId)).returning()
             console.log("USERNAME:" + result)
         }
-        console.log("SUCCESS")
         return {
             message: 'Profile successfully updated',
             errors: {},
