@@ -22,23 +22,22 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: 'No file provided' }, { status: 400 })
     }
 
-    const originalName = file.name
+
     const buffer = Buffer.from(await file.arrayBuffer())
-    const filename = originalName + '_' + file.name.replace(file.name, randomUUID())
+    const filename = file.name.replace(file.name, randomUUID())
 
     try {
-        await writeFile(
-            path.join(process.cwd(), '/public/uploads/' + filename + '.' + file.name.split('.').pop()),
-            buffer
-        )
-
-
         const session = await verifySession()
 
         if (session.isAuth === false) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         const user = session.userId as number
+
+        await writeFile(
+            path.join(process.cwd(), '/public/uploads/' + filename + '.' + file.name.split('.').pop()),
+            buffer
+        )
 
         const category_id: { id: number }[] = await db.select({ id: categories.id }).from(categories).where(eq(categories.name, category))
 

@@ -1,27 +1,50 @@
 "use client"
-
+import Compressor from 'compressorjs'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { useState } from "react"
+import { use, useState } from "react"
 import { Dialog, DialogContent } from "../ui/dialog"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
+import { postProfilePicture } from '@/app/actions/user/actions'
 export function ProfileEditor({
     username,
-    bio
+    bio,
+    userId
 }: {
     username: string,
-    bio: string
+    bio: string,
+    userId: number
 }) {
 
     const [edit, setEdit] = useState(false)
     const [deleteWindow, setDeleteWindow] = useState(false)
     const [passwordWindow, setPasswordWindow] = useState(false)
+    const [file, setFile] = useState<File>()
 
-    const handleClick = () => {
-        console.log("Clicked")
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0]
+        setFile(selectedFile)
+    }
+
+
+    const handleSave = async () => {
+        if (file) {
+            new Compressor(file, {
+                quality: 0.6,
+                success: async (compressedFile) => {
+                    // console.log(compressedFile.size),
+                    await postProfilePicture(file, userId, username)
+                },
+                error: (error) => {
+                    console.log(error)
+                }
+            })
+        } else {
+            return null
+        }
     }
 
     return (
@@ -62,6 +85,7 @@ export function ProfileEditor({
                     </Label>
                     <div className="flex items-center gap-2">
                         <Input
+                            onChange={handleFileChange}
                             disabled={!edit}
                             id="profile-picture"
                             type="file"
@@ -123,7 +147,7 @@ export function ProfileEditor({
                     </DialogContent>
                 </Dialog>
                 <Button onClick={() => setEdit(false)} variant="outline">Cancel</Button>
-                <Button onClick={handleClick}> Save Changes</Button>
+                <Button onClick={handleSave}> Save Changes</Button>
             </div>
         </div>
     )

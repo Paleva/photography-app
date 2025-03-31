@@ -104,14 +104,14 @@ export default function UploadPage() {
                 </Link>
             </div>
             <div className="container mx-auto px-4 py-8 max-w-7xl mt-16">
-                <h1 className="text-3xl font-bold text-center mb-8 md:text-4xl">
+                <h1 className="text-3xl font-bold text-center mb-8 md:text-4xl ">
                     Upload Your Photo
                 </h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Upload Section with Details */}
-                    <Card className="shadow-lg min-h-[550px]">
-                        <CardHeader className="pb-2">
+                    <Card className="shadow-lg min-h-[550px] ">
+                        <CardHeader className="pb-2 mt-8">
                             <CardTitle>Upload Details</CardTitle>
                         </CardHeader>
                         <CardContent className="p-6">
@@ -206,7 +206,7 @@ export default function UploadPage() {
 
                     {/* Preview Section */}
                     <Card className="shadow-lg min-h-[550px]">
-                        <CardHeader className="pb-2">
+                        <CardHeader className="pb-2 mt-8">
                             <CardTitle>Image Preview</CardTitle>
                         </CardHeader>
                         <CardContent className="p-6">

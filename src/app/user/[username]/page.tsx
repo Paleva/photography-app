@@ -3,9 +3,7 @@ import Loading from "./loading"
 import { verifySession } from "@/app/(public)/auth/session"
 import { getUser } from "@/app/actions/feed/actions"
 import { UserCard } from "@/components/profile/user-card"
-import { Bio } from "@/components/profile/bio"
 import { ProfileEditor } from "@/components/profile/ProfileEditor"
-import { Button } from "@/components/ui/button"
 
 export default async function UserPage({ params }: { params: { username: string } }) {
     const { username } = await params
@@ -34,6 +32,7 @@ export default async function UserPage({ params }: { params: { username: string 
                 <ProfileEditor
                     username={user.username}
                     bio={user.bio ?? ""}
+                    userId={session.userId}
                 />
             </Suspense>
         </div>
