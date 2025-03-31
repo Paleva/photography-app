@@ -18,10 +18,7 @@ export default async function UploadsPage({ params }: { params: { username: stri
         <div className="p-4">
             <MasonryGrid>
                 {postIds.map((index) => (
-                    <div
-                        key={index}
-                        className="mb-6 min-h-[300px] hover:z-10 transition-all duration-300"
-                    >
+                    <div key={index} className="mb-6 hover:z-10 transition-all duration-300">
                         <Suspense fallback={<Loading />}>
                             <PostCard id={index} />
                         </Suspense>

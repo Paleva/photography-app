@@ -13,7 +13,7 @@ export async function PostCard({ id }: { id: number }) {
     if (post.id === -1) {
         return (
             <Card key={id} className="overflow-hidden relative">
-                <div className="w-full h-[300px] flex items-center justify-center bg-muted">
+                <div className="w-full flex items-center justify-center bg-muted">
                     <p className="text-red-500 text-lg">Failed to fetch post</p>
                 </div>
             </Card>
@@ -21,14 +21,14 @@ export async function PostCard({ id }: { id: number }) {
     }
 
     return (
-        <Card key={id} className="overflow-hidden relative group rounded-lg">
+        <Card key={id} className="overflow-hidden relative group rounded-lg ">
             {/* Image container - takes up the entire card */}
-            <div className="w-full h-full">
+            <div>
                 <Image
                     src={post.file_path}
                     width={500}
                     height={isVertical ? 700 : 500}
-                    className="w-full h-auto object-cover rounded-lg"
+                    className="w-full h-full object-cover rounded-lg"
                     alt={post.title || "Post image"}
                     priority
                 />

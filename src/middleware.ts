@@ -52,7 +52,6 @@ export default async function middleware(req: NextRequest) {
 export const config = {
     matcher: [
         // Static files and resources to ignore
-        '/((?!_next/static|_next/image|favicon.ico|public/).*)',
         // API routes
         '/api/:path*',
         // User routes

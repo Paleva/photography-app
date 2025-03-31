@@ -11,9 +11,9 @@ interface MasonryGridProps {
 export function MasonryGrid({ children, className = '' }: MasonryGridProps) {
     // These breakpoints determine how many columns to show at different screen widths
     const breakpointColumnsObj = {
-        default: 3, // Default to 3 columns
-        1024: 2,    // 3 columns for large devices
-        768: 2,     // 2 columns for medium devices
+        default: 4, // Default to 3 columns
+        1400: 3, // 4 columns for extra large devices    // 3 columns for large devices
+        1024: 2,     // 2 columns for medium devices
         640: 1      // 1 column for small devices
     }
 

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { use, useState } from "react"
+import { use, useActionState, useState } from "react"
 import { Dialog, DialogContent } from "../ui/dialog"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
@@ -23,6 +23,8 @@ export function ProfileEditor({
     const [deleteWindow, setDeleteWindow] = useState(false)
     const [passwordWindow, setPasswordWindow] = useState(false)
     const [file, setFile] = useState<File>()
+
+    const [state, action, pending] = useActionState()
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0]
