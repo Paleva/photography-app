@@ -55,7 +55,7 @@ export function LoginForm({
                                 {pending ? "Logging in..." : "Login"}
                             </Button>
                             <div className="text-center text-sm">
-                                Don&apos;t have an account?{' '}
+                                Don't have an account?{' '}
                                 <Link className="underline" href="/register">
                                     Sign up
                                 </Link>

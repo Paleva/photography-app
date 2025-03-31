@@ -15,8 +15,6 @@ export default async function UserPage({ params }: { params: { username: string 
 
     const user = await getUser(session.userId)
 
-    console.log(user)
-
     if (!user) {
         return <div> User not found </div>
     }

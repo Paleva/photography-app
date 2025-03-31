@@ -69,7 +69,6 @@ export async function createSession(id: number, username: string) {
 export async function logout() {
     const cookieStore = await cookies();
     cookieStore.delete('session');
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     redirect('/login')
 }
 
