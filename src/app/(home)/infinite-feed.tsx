@@ -82,7 +82,7 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
                             isVertical={postData.isVertical}
                             liked={postData.liked}
                             likesCount={postData.likesCount}
-                            userId={postData.post.user_id}
+                            userId={postData.userId}
                         />
                     </div>
                 ))}

@@ -2,9 +2,7 @@
 
 import { posts, db, users, likes } from '@/db/schema'
 import { eq, desc } from 'drizzle-orm'
-import { imageSizeFromFile } from 'image-size/fromFile'
-import path from 'path'
-import { countLikes, getLiked } from './like-actions'
+import { getLiked } from './like-actions'
 import { verifySession } from '@/app/(public)/auth/session'
 
 export async function getPostsIds(limit: number = 12, offset: number = 0): Promise<number[]> {
@@ -155,6 +153,7 @@ export async function getPaginatedPosts(limit: number = 12, offset: number = 0) 
 
         return {
             posts,
+            userId,
             hasMore: postIds.length === limit
         }
     }
