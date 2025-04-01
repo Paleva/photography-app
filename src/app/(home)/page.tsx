@@ -1,24 +1,25 @@
 import { Suspense } from 'react'
-import { PostCard } from '../../components/feed/postcard'
+import { InfiniteFeed } from './infinite-feed'
 import Loading from './loading'
-import { getAllPostsId } from '../actions/feed/actions'
+import { getPaginatedPosts, } from '../actions/feed/actions'
 import { MasonryGrid } from '@/components/layouts/masonry-grid'
 
 export default async function Page() {
 
-    const postIds = await getAllPostsId()
+    const initialData = await getPaginatedPosts()
 
     return (
         <div>
-            <MasonryGrid>
+            <InfiniteFeed initialPosts={initialData.posts} />
+            {/* <MasonryGrid>
                 {postIds.map((index) => (
                     <div key={index} className="mb-6 hover:z-10 transition-all duration-300">
                         <Suspense fallback={<Loading />}>
-                            <PostCard id={index} />
+                            <ClientPostCards id={index} />
                         </Suspense>
                     </div>
                 ))}
-            </MasonryGrid>
+            </MasonryGrid> */}
         </div>
     )
 }

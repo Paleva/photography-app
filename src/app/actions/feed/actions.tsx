@@ -1,14 +1,21 @@
 'use server'
 
 import { posts, db, users, likes } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import { imageSizeFromFile } from 'image-size/fromFile'
 import path from 'path'
 import { countLikes, getLiked } from './like-actions'
+import { verifySession } from '@/app/(public)/auth/session'
 
-export async function getAllPostsId(): Promise<number[]> {
+export async function getPostsIds(limit: number = 12, offset: number = 0): Promise<number[]> {
     try {
-        const results = await db.select({ id: posts.id }).from(posts)
+        const results = await db
+            .select({ id: posts.id })
+            .from(posts)
+            .orderBy(desc(posts.uploaded_at))
+            .limit(limit)
+            .offset(offset)
+
         const postIds = results.map((post) => post.id)
         return postIds
     } catch (error) {
@@ -72,7 +79,7 @@ export async function getLikedPostId(userId: number): Promise<number[]> {
  * @param {number} userId User id of the user who is fetching the post
  * @returns The post and the associated info for it
  */
-export async function getPost(postId: number, userId: number) {
+export async function getPost(userId: number, postId: number) {
     try {
         const results = await db
             .select({
@@ -90,11 +97,10 @@ export async function getPost(postId: number, userId: number) {
 
         const { post, user } = results[0];
         const liked = await getLiked(userId, post.id)
-        const likesCount = await countLikes(post.id)
-        const dimension = await imageSizeFromFile(path.join(process.cwd(), "/public", post.file_path))
-        const isVertical = dimension.height > dimension.width
+        const likesCount = post.likes
+        const isVertical = post.isvertical
 
-        return { post, user, isVertical, liked, likesCount }
+        return { post, user, isVertical, liked, likesCount, userId }
     }
     catch (error) {
         console.error('Error fetching post:', error)
@@ -127,5 +133,36 @@ export async function getUser(userId: number) {
         return results[0]
     } catch {
         return null
+    }
+}
+
+
+export async function getPaginatedPosts(limit: number = 12, offset: number = 0) {
+    try {
+        const { userId } = await verifySession()
+
+        const postIds = await getPostsIds(limit, offset)
+
+        const posts = await Promise.all(
+            postIds.map(async (id) => {
+                const postData = await getPost(userId || -1, id)
+                return {
+                    id,
+                    ...postData
+                }
+            })
+        )
+
+        return {
+            posts,
+            hasMore: postIds.length === limit
+        }
+    }
+    catch (error) {
+        console.error('Error fetching paginated posts:', error)
+        return {
+            posts: [],
+            hasMore: false
+        }
     }
 }
