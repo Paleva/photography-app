@@ -33,7 +33,7 @@ export async function verifySession() {
     const cookie = (await cookies()).get('session')?.value;
     const session = await decrypt(cookie);
 
-    if (!session?.userId) {
+    if (!session) {
         return { isAuth: false };
     }
 

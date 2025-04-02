@@ -1,30 +1,19 @@
+import { InfiniteFeed } from './infinite-feed'
+import { getPaginatedPostsUploads } from '@/app/actions/feed/actions'
 import { verifySession } from '@/app/(public)/auth/session'
-import { getPostsByUserId } from '@/app/actions/feed/actions'
-import { PostCard } from '@/components/feed/postcard'
-import Loading from '@/app/(home)/loading'
-import { Suspense } from 'react'
-import { MasonryGrid } from '@/components/layouts/masonry-grid'
 
-export default async function UploadsPage({ params }: { params: { username: string } }) {
+export default async function Page() {
+    const { userId } = await verifySession()
 
-    const session = await verifySession()
-    if (!session.userId) {
-        return <div>Please login</div>
+    if (!userId) {
+        return <div>Not logged in</div>
     }
 
-    const postIds = await getPostsByUserId(session.userId)
+    const initialData = await getPaginatedPostsUploads(12, 0, userId)
 
     return (
-        <div className="p-4">
-            <MasonryGrid>
-                {postIds.map((index) => (
-                    <div key={index} className="mb-6 hover:z-10 transition-all duration-300">
-                        <Suspense fallback={<Loading />}>
-                            <PostCard id={index} />
-                        </Suspense>
-                    </div>
-                ))}
-            </MasonryGrid>
+        <div>
+            <InfiniteFeed initialPosts={initialData.posts} />
         </div>
     )
 }

@@ -3,8 +3,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { MasonryGrid } from '@/components/layouts/masonry-grid'
-import { ClientPostCard } from '../../components/feed/postcard'
-import { getPaginatedPosts } from '@/app/actions/feed/actions'
+import { ClientPostCard } from '@/components/feed/postcard'
+import { getPaginatedPostsUploads } from '@/app/actions/feed/actions'
 
 const POSTS_PER_PAGE = 20
 
@@ -40,7 +40,7 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
 
         setIsLoading(true)
         try {
-            const result = await getPaginatedPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE)
+            const result = await getPaginatedPostsUploads(POSTS_PER_PAGE, page * POSTS_PER_PAGE, posts[0]?.userId)
 
             if (!result.posts.length || !result.hasMore) {
                 setHasMore(false)

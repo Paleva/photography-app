@@ -11,6 +11,13 @@ import { eq } from 'drizzle-orm'
 import { verifySession } from '@/app/(public)/auth/session'
 
 export async function POST(req: Request) {
+
+    const session = await verifySession()
+
+    if (session.isAuth === false) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const formData = await req.formData()
     const title: string = formData.get('title') as string
     const file: File | null = formData.get('file') as unknown as File
@@ -24,30 +31,25 @@ export async function POST(req: Request) {
 
 
     const buffer = Buffer.from(await file.arrayBuffer())
-    const filename = file.name.replace(file.name, randomUUID())
+    const filename = file.name.replace(file.name, randomUUID()) + '.' + file.name.split('.').pop()
 
     try {
-        const session = await verifySession()
-
-        if (session.isAuth === false) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        }
         const user = session.userId as number
 
         await writeFile(
-            path.join(process.cwd(), '/public/uploads/' + filename + '.' + file.name.split('.').pop()),
+            path.join(process.cwd(), '/public/uploads/' + filename),
             buffer
         )
 
         const category_id: { id: number }[] = await db.select({ id: categories.id }).from(categories).where(eq(categories.name, category))
 
-        const dimension = await imageSizeFromFile(path.join(process.cwd(), "/public", filename))
+        const dimension = await imageSizeFromFile(path.join(process.cwd(), "/public/uploads/", filename))
         const isVertical = dimension.height > dimension.width
 
         await db.insert(posts).values({
             title: title,
             filename: filename,
-            file_path: "/uploads/" + filename + '.' + file.name.split('.').pop(),
+            file_path: "/uploads/" + filename,
             user_id: user,
             description: description,
             isvertical: isVertical,

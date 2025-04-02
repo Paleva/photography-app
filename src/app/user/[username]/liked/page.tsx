@@ -1,38 +1,20 @@
-import Loading from "@/app/(home)/loading"
-import { PostCard } from "@/components/feed/postcard"
-import { Suspense } from "react"
-import { getLikedPostId } from "@/app/actions/feed/actions"
-import { verifySession } from "@/app/(public)/auth/session"
-import { MasonryGrid } from "@/components/layouts/masonry-grid"
+import { InfiniteFeed } from './infinite-feed'
+import { getPaginatedPostsLiked, } from '@/app/actions/feed/actions'
+import { verifySession } from '@/app/(public)/auth/session'
 
-export default async function LikedPage({ params }: { params: { user: string } }) {
+export default async function Page() {
+    const { userId } = await verifySession()
 
-    const session = await verifySession()
-
-    if (!session.isAuth || !session.userId) {
+    if (!userId) {
         return <div>Not logged in</div>
     }
 
-    const postIds = await getLikedPostId(session.userId)
+    const initialData = await getPaginatedPostsLiked(12, 0, userId)
 
-    if (postIds?.length === 0) {
-        return <div>No liked posts</div>
-    } else if (postIds === undefined) {
-        return <div>Failed to fetch liked posts</div>
-
-    }
-    console.log(postIds)
     return (
-        <div className='p-4'>
-            <MasonryGrid>
-                {postIds.map((index) => (
-                    <div key={index} className="mb-6 hover:z-10 transition-all duration-300">
-                        <Suspense fallback={<Loading />}>
-                            <PostCard id={index} />
-                        </Suspense>
-                    </div>
-                ))}
-            </MasonryGrid>
+        <div>
+            <InfiniteFeed initialPosts={initialData.posts} />
         </div>
     )
 }
+

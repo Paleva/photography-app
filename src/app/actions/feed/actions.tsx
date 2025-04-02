@@ -37,12 +37,15 @@ export async function getPostByUser(userId: number): Promise<any[]> {
     }
 }
 
-export async function getPostsByUserId(userId: number): Promise<number[]> {
+export async function getPostsByUserId(limit: number = 12, offset: number = 0, userId: number): Promise<number[]> {
     try {
         const results = await db
             .select({ id: posts.id })
             .from(posts)
             .where(eq(posts.user_id, userId))
+            .orderBy(desc(posts.uploaded_at))
+            .limit(limit)
+            .offset(offset)
 
         const postIds = results.map((post) => post.id)
         return postIds
@@ -57,12 +60,14 @@ export async function getPostsByUserId(userId: number): Promise<number[]> {
 *   @param {number} userId is the id of the user
 *   @return {number} Ids of the posts that are liked by the user
 */
-export async function getLikedPostId(userId: number): Promise<number[]> {
+export async function getLikedPostId(limit: number = 12, offset: number = 0, userId: number): Promise<number[]> {
     try {
         const results = await db
             .select()
             .from(likes)
             .where(eq(likes.user_id, userId))
+            .limit(limit)
+            .offset(offset)
 
         const postIds = results.map((like) => like.post_id)
         return postIds
@@ -165,3 +170,66 @@ export async function getPaginatedPosts(limit: number = 12, offset: number = 0) 
         }
     }
 }
+
+
+export async function getPaginatedPostsLiked(limit: number = 12, offset: number = 0, userId: number) {
+    try {
+
+        const postIds = await getLikedPostId(limit, offset, userId)
+
+        const posts = await Promise.all(
+            postIds.map(async (id) => {
+                const postData = await getPost(userId || -1, id)
+                return {
+                    id,
+                    ...postData
+                }
+            })
+        )
+
+        return {
+            posts,
+            userId,
+            hasMore: postIds.length === limit
+        }
+    }
+    catch (error) {
+        console.error('Error fetching paginated posts:', error)
+        return {
+            posts: [],
+            hasMore: false
+        }
+    }
+}
+
+
+export async function getPaginatedPostsUploads(limit: number = 12, offset: number = 0, userId: number) {
+    try {
+
+        const postIds = await getPostsByUserId(limit, offset, userId)
+
+        const posts = await Promise.all(
+            postIds.map(async (id) => {
+                const postData = await getPost(userId || -1, id)
+                return {
+                    id,
+                    ...postData
+                }
+            })
+        )
+
+        return {
+            posts,
+            userId,
+            hasMore: postIds.length === limit
+        }
+    }
+    catch (error) {
+        console.error('Error fetching paginated posts:', error)
+        return {
+            posts: [],
+            hasMore: false
+        }
+    }
+}
+

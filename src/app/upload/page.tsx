@@ -52,13 +52,13 @@ export default function UploadPage() {
             return
         }
 
-        if (!category) {
-            setValidationError("Please select a category")
+        if (!title) {
+            setValidationError("Please enter a title")
             return
         }
 
-        if (!title) {
-            setValidationError("Please enter a title")
+        if (!category) {
+            setValidationError("Please select a category")
             return
         }
 
@@ -116,11 +116,6 @@ export default function UploadPage() {
                         </CardHeader>
                         <CardContent className="p-6">
                             <form onSubmit={upload} className="space-y-6">
-                                {validationError && (
-                                    <div className="p-3 bg-red-50 text-red-700 rounded-md border border-red-200">
-                                        {validationError}
-                                    </div>
-                                )}
 
                                 <div className="space-y-2">
                                     <Label htmlFor='file'>Choose a photo <span className="text-red-500">*</span></Label>
@@ -168,7 +163,7 @@ export default function UploadPage() {
                                     >
                                         <SelectTrigger
                                             id="category"
-                                            className={`w-full ${!category && 'border-red-200 focus:ring-red-500'}`}
+                                            className={`w-full`}
                                         >
                                             <SelectValue placeholder="Select a category" />
                                         </SelectTrigger>
@@ -181,7 +176,7 @@ export default function UploadPage() {
                                             <SelectItem value="other">Other</SelectItem>
                                         </SelectContent>
                                     </Select>
-                                    {!category && <p className="text-sm text-red-500 mt-1">Category is required</p>}
+                                    {/* {!category && <p className="text-sm text-red-500 mt-1">Category is required</p>} */}
                                 </div>
 
                                 <Button
@@ -192,6 +187,11 @@ export default function UploadPage() {
                                     {pending ? 'Uploading...' : 'Upload Image'}
                                 </Button>
 
+                                {validationError && (
+                                    <div className="p-3 bg-red-50 text-red-700 rounded-md border border-red-200">
+                                        {validationError}
+                                    </div>
+                                )}
                                 {uploadSuccess && (
                                     <div className="p-3 bg-green-100 text-green-700 rounded-md border border-green-200 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
