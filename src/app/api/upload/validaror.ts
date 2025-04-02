@@ -66,5 +66,5 @@ export const uploadPostSchema = z.object({
         { message: "File size must be less than 5MB" }
     ),
     category: z.string().trim(),
-    description: z.string().trim()
+    description: z.string().trim().nullable()
 })

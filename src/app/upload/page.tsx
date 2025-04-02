@@ -27,6 +27,7 @@ export default function UploadPage() {
     const [title, setTitle] = useState('')
     const [validationError, setValidationError] = useState<string | null>(null)
 
+
     // Generate preview URL when file changes
     useEffect(() => {
         if (!file) {

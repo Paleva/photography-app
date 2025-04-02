@@ -7,7 +7,7 @@ import { randomUUID } from 'crypto'
 import { posts, db, categories } from '@/db/schema'
 import { imageSizeFromFile } from 'image-size/fromFile'
 import { eq } from 'drizzle-orm'
-
+import { UploadPostFormState, uploadPostSchema } from './validaror'
 import { verifySession } from '@/app/(public)/auth/session'
 
 export async function POST(req: Request) {
@@ -19,11 +19,22 @@ export async function POST(req: Request) {
     }
 
     const formData = await req.formData()
-    const title: string = formData.get('title') as string
-    const file: File | null = formData.get('file') as unknown as File
-    const category: string = formData.get('category') as string
-    const description: string = formData.get('description') as string
 
+    const validatedFields = uploadPostSchema.safeParse({
+        file: formData.get('file'),
+        title: formData.get('title'),
+        category: formData.get('category'),
+        description: formData.get('description')
+    })
+
+    if (!validatedFields.success) {
+        console.error(validatedFields.error.flatten().fieldErrors)
+        return NextResponse.json({
+            error: validatedFields.error.flatten().fieldErrors
+        }, { status: 400 })
+    }
+
+    const { file, title, category, description } = validatedFields.data
 
     if (!file) {
         return NextResponse.json({ message: 'No file provided' }, { status: 400 })
