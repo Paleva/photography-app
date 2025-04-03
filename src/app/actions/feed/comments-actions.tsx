@@ -2,17 +2,19 @@
 
 import { db, comments, users } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function getComments(postId: number) {
     try {
         const result = await db
             .select({
                 id: comments.id,
-                content: comments.comment_text,
+                comment_text: comments.comment_text,
                 created_at: comments.created_at,
                 user: {
                     id: users.id,
-                    username: users.username
+                    username: users.username,
+                    avatar: users.profile_picture,
                 }
             })
             .from(comments)
@@ -43,7 +45,8 @@ export async function addComment(postId: number, userId: number, content: string
         const user = await db
             .select({
                 id: users.id,
-                username: users.username
+                username: users.username,
+                avatar: users.profile_picture,
             })
             .from(users)
             .where(eq(users.id, userId))

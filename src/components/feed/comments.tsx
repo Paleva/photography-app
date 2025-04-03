@@ -12,15 +12,15 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
     const [comments, setComments] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    const loadComments = async () => {
+        setIsLoading(true);
+        const fetchedComments = await getComments(postId);
+        setComments(fetchedComments || []);
+        setIsLoading(false);
+    };
+
     // Load comments when component mounts
     useEffect(() => {
-        const loadComments = async () => {
-            setIsLoading(true);
-            const fetchedComments = await getComments(postId);
-            setComments(fetchedComments || []);
-            setIsLoading(false);
-        };
-
         loadComments();
     }, [postId]);
 
@@ -30,14 +30,21 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
         try {
             const newComment = await addComment(postId, userId, comment);
             if (newComment) {
+                console.log("New comment added:", newComment);
                 setComments((prev) => [...prev, newComment]);
                 setComment("");
+                // await loadComments(); // Refresh comments after adding a new one
+                setTimeout(() => {
+                    const scrollContainer = document.querySelector('[data-radix-scroll-area-viewport]');
+                    if (scrollContainer) {
+                        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                    }
+                }, 100);
             }
         } catch (error) {
             console.error("Failed to add comment:", error);
         }
     };
-
     return (
         <div className="border-t pt-4 px-4 pb-2">
 
@@ -49,9 +56,9 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
                 ) : (
                     <div className="space-y-4">
                         {comments.map((comment) => (
-                            <div key={comment.id} className="flex gap-3">
+                            <div key={comment.id} className="flex gap-3 m-4">
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={`https://i.pravatar.cc/150?u=${comment.user.id}`} alt={comment.user.username} />
+                                    <AvatarImage src={comment.user.avatar} alt={comment.user.username} />
                                     <AvatarFallback>{comment.user.username.charAt(0)}</AvatarFallback>
                                 </Avatar>
                                 <div>
@@ -61,7 +68,7 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
                                             {new Date(comment.created_at).toLocaleDateString()}
                                         </span>
                                     </div>
-                                    <p className="text-sm">{comment.content}</p>
+                                    <p className="text-sm">{comment.comment_text}</p>
                                 </div>
                             </div>
                         ))}
