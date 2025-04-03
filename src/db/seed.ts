@@ -524,7 +524,8 @@ async function seed() {
         password: `${await bcrypt.hash("testtest", 10)}`,
         role: "User",
         profile_picture: `https://i.pravatar.cc/150?u=${i + 1}`,
-        bio: "Photography lover"
+        bio: "Photography lover",
+        uploaded_at: `${new Date().getFullYear() + "-" + new Date().getDate() + '-' + new Date().getDay() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds() + '.' + new Date().getMilliseconds()}`,
     }));
 
     const userData = await Promise.all(userDataPromise);
@@ -546,7 +547,7 @@ async function seed() {
     // Insert Multiple Posts (500 total)
     const postPromises = Array.from({ length: Math.min(500, files.length) }, async (_, i) => {
         const filename = files[i];
-        // const filename = `${filename}_${randomUUID()}`;
+        // const filename = `${ filename }_${ randomUUID() } `;
         let isVertical = false;
 
         try {
@@ -560,18 +561,18 @@ async function seed() {
                 console.log(`File not found: ${uploadPath}, defaulting to horizontal orientation`);
             }
         } catch (error) {
-            console.error(`Error getting image dimensions for ${filename}:`, error);
+            console.error(`Error getting image dimensions for ${filename}: `, error);
         }
 
         const user = insertedUsers[i % insertedUsers.length];
         const category = categoryIds[i % categoryIds.length];
 
         return {
-            title: `Photo ${i + 1}`,
+            title: `Photo ${i + 1} `,
             filename: filename,
             description: `Description for photo ${i + 1}`,
             user_id: user.id,
-            file_path: `/uploads/${filename}`,
+            file_path: `/ uploads / ${filename} `,
             category_id: category,
             likes: 0,
             isvertical: isVertical

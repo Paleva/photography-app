@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     if (!validatedFields.success) {
         console.error(validatedFields.error.flatten().fieldErrors)
         return NextResponse.json({
-            error: validatedFields.error.flatten().fieldErrors
+            message: validatedFields.error.flatten().fieldErrors
         }, { status: 400 })
     }
 

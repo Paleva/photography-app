@@ -12,7 +12,7 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
     // Add instanceId to track unique instances of posts
     const [posts, setPosts] = useState<any[]>(initialPosts.map(post => ({
         ...post,
-        instanceId: `${post.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+        instanceId: post.id
     })))
     const [page, setPage] = useState(1) // Start at 1 since we already have the first page
     const [isLoading, setIsLoading] = useState(false)
@@ -48,7 +48,7 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
                 // Add unique instanceId to each new post
                 const postsWithUniqueIds = result.posts.map(post => ({
                     ...post,
-                    instanceId: `${post.id}-${page}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+                    instanceId: post.id
                 }));
 
                 // Only balance the new posts, then append them to existing posts
@@ -75,7 +75,7 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
             <MasonryGrid>
                 {posts.map((postData) => (
                     // Use the instanceId as the key instead of just postData.id
-                    <div key={postData.instanceId || `${postData.id}-${Math.random()}`} className="mb-6 hover:z-10 transition-all duration-300">
+                    <div key={postData.post.id || `${postData.id}-${Math.random()}`} className="mb-6 hover:z-10 transition-all duration-300">
                         <ClientPostCard
                             post={postData.post}
                             user={postData.user}

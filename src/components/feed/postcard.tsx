@@ -67,7 +67,7 @@ export function ClientPostCard({
                         </Avatar>
                         <div>
                             <p className="font-medium">{user.username}</p>
-                            <Link href={`/${user.username}`}>
+                            <Link href={`/user/${user.username}`}>
                                 <p className="text-sm text-white/70">@{user.username}</p>
                             </Link>
                         </div>
@@ -77,10 +77,12 @@ export function ClientPostCard({
                 {/* Bottom gradient overlay */}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 text-white">
                     <div className="mb-3">
-                        <h3 className="text-xl font-bold mb-1">{post.title}</h3>
-                        <p className="text-sm text-white/80 line-clamp-2">
-                            {post.description}
-                        </p>
+                        <Link href={`/post/${post.id}`}>
+                            <h3 className="text-xl font-bold mb-1">{post.title}</h3>
+                            <p className="text-sm text-white/80 line-clamp-2">
+                                {post.description}
+                            </p>
+                        </Link>
                     </div>
 
                     <PostCardFooter

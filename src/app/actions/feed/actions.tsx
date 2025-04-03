@@ -1,16 +1,16 @@
 'use server'
 
 import { posts, db, users, likes } from '@/db/schema'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, asc } from 'drizzle-orm'
 import { getLiked } from './like-actions'
 import { verifySession } from '@/app/(public)/auth/session'
 
-export async function getPostsIds(limit: number = 12, offset: number = 0): Promise<number[]> {
+export async function getPostsIds(limit: number = 20, offset: number = 0): Promise<number[]> {
     try {
         const results = await db
             .select({ id: posts.id })
             .from(posts)
-            .orderBy(desc(posts.uploaded_at))
+            .orderBy(asc(posts.uploaded_at))
             .limit(limit)
             .offset(offset)
 
@@ -37,7 +37,7 @@ export async function getPostByUser(userId: number): Promise<any[]> {
     }
 }
 
-export async function getPostsByUserId(limit: number = 12, offset: number = 0, userId: number): Promise<number[]> {
+export async function getPostsByUserId(limit: number = 20, offset: number = 0, userId: number): Promise<number[]> {
     try {
         const results = await db
             .select({ id: posts.id })
@@ -60,7 +60,7 @@ export async function getPostsByUserId(limit: number = 12, offset: number = 0, u
 *   @param {number} userId is the id of the user
 *   @return {number} Ids of the posts that are liked by the user
 */
-export async function getLikedPostId(limit: number = 12, offset: number = 0, userId: number): Promise<number[]> {
+export async function getLikedPostId(limit: number = 20, offset: number = 0, userId: number): Promise<number[]> {
     try {
         const results = await db
             .select()
@@ -140,11 +140,14 @@ export async function getUser(userId: number) {
 }
 
 
-export async function getPaginatedPosts(limit: number = 12, offset: number = 0) {
+export async function getPaginatedPosts(limit: number = 20, offset: number = 0) {
     try {
         const { userId } = await verifySession()
 
         const postIds = await getPostsIds(limit, offset)
+        console.log('Post IDs:', postIds)
+        console.log('OFFSET:', offset)
+        console.log('LIMIT:', limit)
 
         const posts = await Promise.all(
             postIds.map(async (id) => {
@@ -172,7 +175,7 @@ export async function getPaginatedPosts(limit: number = 12, offset: number = 0) 
 }
 
 
-export async function getPaginatedPostsLiked(limit: number = 12, offset: number = 0, userId: number) {
+export async function getPaginatedPostsLiked(limit: number = 20, offset: number = 0, userId: number) {
     try {
 
         const postIds = await getLikedPostId(limit, offset, userId)
@@ -203,7 +206,7 @@ export async function getPaginatedPostsLiked(limit: number = 12, offset: number 
 }
 
 
-export async function getPaginatedPostsUploads(limit: number = 12, offset: number = 0, userId: number) {
+export async function getPaginatedPostsUploads(limit: number = 20, offset: number = 0, userId: number) {
     try {
 
         const postIds = await getPostsByUserId(limit, offset, userId)

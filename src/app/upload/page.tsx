@@ -81,7 +81,11 @@ export default function UploadPage() {
                 body: data
             })
 
-            if (!res.ok) throw new Error(await res.text())
+            if (!res.ok) {
+                const error = await res.json()
+                console.error(error.message)
+                return
+            }
             setUploadSuccess(true)
         } catch (error) {
             console.error(error)
@@ -125,7 +129,7 @@ export default function UploadPage() {
                                         type="file"
                                         name='file'
                                         onChange={handleFileChange}
-                                        accept="image/*"
+                                        accept="image/png image/jpeg image/jpg image/gif image/webp"
                                         className='hover:bg-gray-100 focus:bg-gray-50 transition-colors'
                                         required
                                     />

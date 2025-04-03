@@ -3,7 +3,6 @@ import { users, db } from '@/db/schema'
 import { randomUUID } from 'crypto'
 import { eq } from 'drizzle-orm'
 import { writeFile } from 'fs/promises'
-import { revalidatePath } from 'next/cache'
 import { uploadUserSchema, UploadUserFormState } from '@/app/api/upload/validaror'
 import path from 'path'
 import { getUser } from '../feed/actions'
@@ -14,6 +13,8 @@ export async function postProfileInfo(
     formData: FormData
 ): Promise<UploadUserFormState> {
     try {
+
+
 
         const validatedFields = uploadUserSchema.safeParse({
             file: formData.get('avatar'),
@@ -41,7 +42,7 @@ export async function postProfileInfo(
             )
             const pathname = '/uploads/' + filename + '.' + file.name.split('.').pop()
             const result = await db.update(users).set({ profile_picture: pathname }).where(eq(users.id, userId)).returning()
-            console.log("FILE:" + result)
+            console.log("FILE:" + result + "\n SIZE:" + file.size / 1024 / 1024 + "MB")
         }
 
         if (bio) {
