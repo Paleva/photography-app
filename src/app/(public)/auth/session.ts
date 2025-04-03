@@ -69,7 +69,12 @@ export async function createSession(id: number, username: string) {
 export async function logout() {
     const cookieStore = await cookies();
     cookieStore.delete('session');
-    redirect('/login')
+    redirect('/')
+}
+
+export async function deleteCookie() {
+    const cookieStore = await cookies();
+    cookieStore.delete('session');
 }
 
 export async function getSession() {

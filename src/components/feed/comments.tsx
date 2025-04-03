@@ -33,7 +33,6 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
                 console.log("New comment added:", newComment);
                 setComments((prev) => [...prev, newComment]);
                 setComment("");
-                // await loadComments(); // Refresh comments after adding a new one
                 setTimeout(() => {
                     const scrollContainer = document.querySelector('[data-radix-scroll-area-viewport]');
                     if (scrollContainer) {

@@ -7,7 +7,7 @@ export default async function Page() {
     const initialData = await getPaginatedPosts()
 
     return (
-        <div>
+        <div className='p-2'>
             <InfiniteFeed initialPosts={initialData.posts} />
         </div>
     )
