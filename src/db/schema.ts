@@ -18,6 +18,10 @@ export const users = pgTable("users", {
     created_at: timestamp().defaultNow(),
 });
 
+export const categories = pgTable("categories", {
+    id: serial().primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
+})
 
 export const posts = pgTable("posts", {
     id: serial().primaryKey(),
@@ -30,11 +34,6 @@ export const posts = pgTable("posts", {
     likes: integer().default(0),
     isvertical: boolean().default(false),
     uploaded_at: timestamp().defaultNow(),
-})
-
-export const categories = pgTable("categories", {
-    id: serial().primaryKey(),
-    name: varchar({ length: 255 }).notNull(),
 })
 
 export const likes = pgTable("likes", {

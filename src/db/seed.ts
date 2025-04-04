@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Client } from "pg";
 import bcrypt from "bcrypt";
 import { users, posts, categories, comments, likes } from "./schema";
-import { randomUUID } from "crypto";
+import { randomInt, randomUUID } from "crypto";
 import { imageSizeFromFile } from "image-size/fromFile";
 import path from "path";
 import fs from "fs";
@@ -515,18 +515,27 @@ const files = [
     'pexels-zlfdmr23-31283699.jpg'
 ];
 
+
+function randomDate(start: number, end: number, startHour: number, endHour: number): Date {
+    var date = new Date(+start + Math.random() * (end - start));
+    var hour = startHour + Math.random() * (endHour - startHour) | 0;
+    date.setHours(hour);
+    return date
+    // return `${date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds()}`;
+}
+
 async function seed() {
     await client.connect();
     // Insert Multiple Users
-    const userDataPromise = Array.from({ length: 50 }, async (_, i) => ({
-        username: `User_${i + 1}`,
-        email: `user${i + 1}@example.com`,
-        password: `${await bcrypt.hash("testtest", 10)}`,
-        role: "User",
-        profile_picture: `https://i.pravatar.cc/150?u=${i + 1}`,
-        bio: "Photography lover",
-        uploaded_at: `${new Date().getFullYear() + "-" + new Date().getDate() + '-' + new Date().getDay() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds() + '.' + new Date().getMilliseconds()}`,
-    }));
+    const userDataPromise = Array.from({ length: 50 }, async (_, i) => (
+        {
+            username: `User_${i + 1}`,
+            email: `user${i + 1}@example.com`,
+            password: `${await bcrypt.hash("testtest", 10)}`,
+            role: "User",
+            profile_picture: `https://i.pravatar.cc/150?u=${i + 1}`,
+            bio: "Photography lover",
+        }));
 
     const userData = await Promise.all(userDataPromise);
 
@@ -572,10 +581,11 @@ async function seed() {
             filename: filename,
             description: `Description for photo ${i + 1}`,
             user_id: user.id,
-            file_path: `/ uploads / ${filename} `,
+            file_path: `/uploads/${filename}`,
             category_id: category,
             likes: 0,
-            isvertical: isVertical
+            isvertical: isVertical,
+            uploaded_at: randomDate(new Date(2023, 0, 1).getTime(), new Date(2023, 11, 31).getTime(), 0, 23)
         };
     });
 

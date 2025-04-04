@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button"
 import { EditProfileForm } from "@/components/profile/EditProfileForm"
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog"
 import { ChangePasswordDialog } from "@/components/profile/ChangePasswordDialog"

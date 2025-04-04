@@ -43,52 +43,59 @@ export function ChangePasswordDialog() {
             <Dialog open={passwordWindow} onOpenChange={(open) => !open && handleClose()}>
                 <DialogContent>
                     <div className="flex justify-between items-center mb-2">
-                        <DialogTitle className="text-lg font-medium">Change Password</DialogTitle>
+                        <DialogTitle className="text-lg font-medium">
+                            {!passwordChanged
+                                ? "Change Password"
+                                : "Password Changed"}
+                        </DialogTitle>
                         <Button variant="ghost" size="sm" onClick={() => setPasswordWindow(false)}>
                             <X className="h-4 w-4" />
                         </Button>
                     </div>
-                    <div className="flex-col junstify-between items-center">
-                        <form action={action}>
-                            <Label htmlFor="new-password" className="block text-sm font-medium my-2">
-                                New password
-                            </Label>
-                            <Input
-                                id="password"
-                                name="password"
-                                type="password"
-                                placeholder="Enter current password"
-                                className="my-2"
-                            />
-                            {state?.errors?.password && (
-                                <p className="text-red-500 text-md">
-                                    {state.errors.password}
-                                </p>
-                            )}
-                            <Label htmlFor="repeat-new-password" className="block text-sm font-medium my-2">
-                                Repeat new password
-                            </Label>
-                            <Input
-                                id="repeatedPassword"
-                                name="repeatedPassword"
-                                type="password"
-                                placeholder="Enter current password"
-                                className="my-2"
-                            />
-                            {state?.errors?.repeatedPassword && (
-                                <p className="text-red-500 text-md">
-                                    {state.errors.repeatedPassword}
-                                </p>
-                            )}
-                            <Button className="my-2 w-full" disabled={pending} aria-disabled={pending} type='submit' variant='default'>Change password</Button>
-                        </form>
-                    </div>
+                    {!passwordChanged && (
+                        <div className="flex-col junstify-between items-center">
+                            <form action={action}>
+                                <Label htmlFor="new-password" className="block text-sm font-medium my-2">
+                                    New password
+                                </Label>
+                                <Input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    placeholder="Enter current password"
+                                    className="my-2"
+                                />
+                                {state?.errors?.password && (
+                                    <p className="text-red-500 text-md">
+                                        {state.errors.password}
+                                    </p>
+                                )}
+                                <Label htmlFor="repeat-new-password" className="block text-sm font-medium my-2">
+                                    Repeat new password
+                                </Label>
+                                <Input
+                                    id="repeatedPassword"
+                                    name="repeatedPassword"
+                                    type="password"
+                                    placeholder="Enter current password"
+                                    className="my-2"
+                                />
+                                {state?.errors?.repeatedPassword && (
+                                    <p className="text-red-500 text-md">
+                                        {state.errors.repeatedPassword}
+                                    </p>
+                                )}
+                                <Button className="my-2 w-full" disabled={pending} aria-disabled={pending} type='submit' variant='default'>Change password</Button>
+                            </form>
+                        </div>
+                    )}
                     {state?.message && (
-                        <>
-                            <p className={`text-md ${state.success ? "text-green-500" : "text-red-500"}`}>
-                                {state.message}
-                            </p>
-                        </>
+                        <div className="p-3 mt-2 bg-green-100 text-green-700 rounded-md border border-green-200 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            {state.message}
+                        </div>
                     )}
                     {passwordChanged && (
                         <div className="flex justify-center mt-4">
