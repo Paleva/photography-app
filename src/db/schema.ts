@@ -30,6 +30,7 @@ export const posts = pgTable("posts", {
     description: text(),
     user_id: integer().references(() => users.id).notNull(),
     file_path: text().notNull(),
+    real_path: text().notNull(),
     category_id: integer().references(() => categories.id).notNull(),
     likes: integer().default(0),
     isvertical: boolean().default(false),

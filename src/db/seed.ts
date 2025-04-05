@@ -2,7 +2,6 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Client } from "pg";
 import bcrypt from "bcrypt";
 import { users, posts, categories, comments, likes } from "./schema";
-import { randomInt, randomUUID } from "crypto";
 import { imageSizeFromFile } from "image-size/fromFile";
 import path from "path";
 import fs from "fs";
@@ -517,8 +516,8 @@ const files = [
 
 
 function randomDate(start: number, end: number, startHour: number, endHour: number): Date {
-    var date = new Date(+start + Math.random() * (end - start));
-    var hour = startHour + Math.random() * (endHour - startHour) | 0;
+    const date = new Date(+start + Math.random() * (end - start));
+    const hour = startHour + Math.random() * (endHour - startHour) | 0;
     date.setHours(hour);
     return date
     // return `${date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds()}`;
@@ -560,7 +559,7 @@ async function seed() {
         let isVertical = false;
 
         try {
-            const uploadPath = path.join(process.cwd(), "/public/uploads/", filename);
+            const uploadPath = path.join(process.cwd(), "/uploads/", filename);
             // Check if file exists before getting dimensions
             if (fs.existsSync(uploadPath)) {
                 const dimension = await imageSizeFromFile(uploadPath);
@@ -581,7 +580,8 @@ async function seed() {
             filename: filename,
             description: `Description for photo ${i + 1}`,
             user_id: user.id,
-            file_path: `/uploads/${filename}`,
+            file_path: `/api/file/${filename}`,
+            real_path: '/uploads/' + filename,
             category_id: category,
             likes: 0,
             isvertical: isVertical,

@@ -2,21 +2,96 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useActionState, useState } from "react"
+import React, { useActionState, useEffect, useState } from "react"
 import { postProfileInfo } from '@/app/actions/user/actions'
+import Compressor from 'compressorjs';
 
 export function EditProfileForm({
     username,
     bio,
     userId,
+    onUpdate
 }: {
     username: string,
     bio: string,
     userId: number,
+    onUpdate: () => Promise<void>
 }) {
-    const [edit, setEdit] = useState(false)
     const [state, action, pending] = useActionState(postProfileInfo, { errors: {} })
 
+    const [edit, setEdit] = useState(false)
+    const [compressedFile, setCompressedFile] = useState<File | null>(null)
+
+    // Custom action wrapper that will include our compressed file
+    const enhancedAction = async (formData: FormData) => {
+        // If we have a compressed file, replace the avatar in formData
+        if (compressedFile) {
+            formData.set('avatar', compressedFile);
+        }
+
+        // Pass the modified formData to the original action
+        return action(formData);
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) {
+            setCompressedFile(null);
+            return;
+        }
+
+        if (file.size < 1024 * 1024) return setCompressedFile(file); // If file is already small enough, no need to compress
+
+        new Compressor(file, {
+            quality: 0.6, // Lower quality for larger files
+            maxWidth: 800, // Reduce dimensions
+            maxHeight: 800,
+            convertSize: 800000, // Try to get under 800KB
+            success(result) {
+                // Create a new File from the compressed Blob
+                const compressedImageFile = new File([result], file.name, {
+                    type: file.type,
+                    lastModified: Date.now()
+                });
+
+                // If still too large, try even more aggressive compression
+                const compressedSizeMB = compressedImageFile.size / (1024 * 1024);
+
+                if (compressedSizeMB > 1) {
+                    // Try even more aggressive compression
+                    new Compressor(compressedImageFile, {
+                        quality: 0.2,
+                        maxWidth: 600,
+                        maxHeight: 600,
+                        success(finalResult) {
+                            const finalCompressedFile = new File([finalResult], file.name, {
+                                type: file.type,
+                                lastModified: Date.now()
+                            });
+                        },
+                        error(err) {
+                            console.error(err);
+                            setCompressedFile(null);
+                        }
+                    });
+                } else {
+                    setCompressedFile(compressedImageFile);
+                }
+            },
+            error(err) {
+                console.error('Compression failed:', err);
+                setCompressedFile(null);
+            },
+        });
+    };
+
+    useEffect(() => {
+        if (state?.success) {
+            setEdit(false);
+            setCompressedFile(null);
+            onUpdate()
+        }
+    }, [state?.success, onUpdate])
 
     return (
         <>
@@ -24,7 +99,7 @@ export function EditProfileForm({
                 <h2 className="text-xl font-bold ">Edit Profile</h2>
                 <Button onClick={() => setEdit(true)} variant="outline">Edit Profile</Button>
             </div>
-            <form action={action} >
+            <form action={enhancedAction} >
                 <div className="space-y-3 pb-4">
                     <Label htmlFor="username" className="block text-sm font-medium">
                         Username
@@ -69,8 +144,9 @@ export function EditProfileForm({
                             type="file"
                             accept="image/*"
                             defaultValue={undefined}
-                            onChange={(e) => { }}
                             disabled={!edit}
+                            onChange={handleFileChange}
+                            className="border-gray-300 rounded-md hover:ring hover:ring-opacity-50"
                         />
                     </div>
                     {state?.errors?.file && (
@@ -87,6 +163,7 @@ export function EditProfileForm({
                 )}
                 <Input hidden type="text" name="userId" defaultValue={userId} />
                 <Button type='submit' disabled={!edit || pending} aria-disabled={pending}> Save Changes</Button>
+
                 {edit && <Button onClick={() => setEdit(false)} className="ml-3" variant="outline">Cancel</Button>}
             </form>
         </>

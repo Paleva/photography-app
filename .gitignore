@@ -37,7 +37,7 @@ yarn-error.log*
 .vercel
 
 #public
-/public
+/uploads
 
 # typescript
 *.tsbuildinfo

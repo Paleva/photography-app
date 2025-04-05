@@ -10,7 +10,7 @@ interface CommentButtonProps {
     toggleComments: () => void
 }
 
-export function CommentButton({ showComments, toggleComments }: CommentButtonProps) {
+export function CommentButton({ toggleComments }: CommentButtonProps) {
     return (
         <Button
             variant="ghost"

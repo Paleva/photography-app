@@ -53,7 +53,6 @@ export function ClientPostCard({
                     height={isVertical ? 700 : 500}
                     className="w-full h-full object-cover rounded-lg"
                     alt={post.title || "Post image"}
-                    priority
                 />
 
                 {/* Top gradient overlay */}
@@ -67,7 +66,7 @@ export function ClientPostCard({
                         </Avatar>
                         <div>
                             <p className="font-medium">{user.username}</p>
-                            <Link href={`/user/${user.username}`}>
+                            <Link href={`/${user.username}`}>
                                 <p className="text-sm text-white/70">@{user.username}</p>
                             </Link>
                         </div>
