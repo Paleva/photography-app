@@ -8,7 +8,39 @@ import { getPaginatedPosts } from '@/app/actions/feed/actions'
 
 const POSTS_PER_PAGE = 20
 
-export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
+
+type PostData = {
+    post: {
+        id: number
+        file_path: string
+        title: string
+        description: string
+    }
+    user: {
+        id: number
+        username: string
+        profile_picture?: string
+    }
+    isVertical: boolean
+    liked: boolean
+    likesCount: number
+    userId: number
+}
+
+type GetPostsFunction = (limit?: number, offset?: number, category?: string) => Promise<{
+    posts: any[],
+    hasMore: boolean
+}>
+
+export function InfiniteFeed({
+    initialPosts,
+    getPosts,
+    category = ''
+}: {
+    initialPosts: any[],
+    getPosts: GetPostsFunction,
+    category?: string
+}) {
     // Add instanceId to track unique instances of posts
     const [posts, setPosts] = useState<any[]>(initialPosts.map(post => ({
         ...post,
@@ -18,6 +50,7 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
     const [isLoading, setIsLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
     const gridRef = useRef<HTMLDivElement>(null)
+    const previousCategory = useRef<string>(category)
 
     const { ref, inView } = useInView({
         threshold: 0,
@@ -35,12 +68,43 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
         });
     };
 
+    useEffect(() => {
+        if (previousCategory.current !== category) {
+            setPage(1)
+            setHasMore(true)
+
+            const loadInitialPostsForCategory = async () => {
+                setIsLoading(true)
+                try {
+                    const result = await getPosts(POSTS_PER_PAGE, 0, category)
+
+                    if (!result.posts.length) {
+                        setHasMore(false)
+                    }
+
+                    const postsWithUniqueIds = result.posts.map(post => ({
+                        ...post,
+                        instanceId: post.id
+                    }));
+                    const newPosts = distributeNewPostsEvenly(postsWithUniqueIds)
+                    setPosts(newPosts)
+                } catch (error) {
+                    console.error('Error loading initial posts:', error)
+                }
+                finally {
+                    setIsLoading(false)
+                }
+            }
+
+        }
+    })
+
     const loadMorePosts = async () => {
         if (isLoading || !hasMore) return
 
         setIsLoading(true)
         try {
-            const result = await getPaginatedPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE)
+            const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE)
 
             if (!result.posts.length || !result.hasMore) {
                 setHasMore(false)

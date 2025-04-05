@@ -40,7 +40,7 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
 
         setIsLoading(true)
         try {
-            const result = await getPaginatedPostsUploads(POSTS_PER_PAGE, page * POSTS_PER_PAGE, posts[0]?.userId)
+            const result = await getPaginatedPostsUploads(POSTS_PER_PAGE, page * POSTS_PER_PAGE)
             console.log('HAS MORE:' + result.hasMore)
             if (!result.posts.length || !result.hasMore) {
                 setHasMore(false)

@@ -9,7 +9,7 @@ export default async function Page() {
         return <div>Not logged in</div>
     }
 
-    const initialData = await getPaginatedPostsUploads(20, 0, userId)
+    const initialData = await getPaginatedPostsUploads()
 
     return (
         <div className='p-2'>

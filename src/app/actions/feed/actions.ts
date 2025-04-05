@@ -1,6 +1,6 @@
 'use server'
 
-import { posts, db, users, likes } from '@/db/schema'
+import { posts, db, users, likes, categories } from '@/db/schema'
 import { eq, desc } from 'drizzle-orm'
 import { getLiked } from './like-actions'
 import { verifySession } from '@/app/(public)/auth/session'
@@ -145,13 +145,31 @@ export async function getUser(userId: number) {
 }
 
 
-export async function getPaginatedPosts(limit: number = 20, offset: number = 0) {
+export async function getPaginatedPosts(limit: number = 20, offset: number = 0, category: string = '') {
     try {
-        const { userId } = await verifySession()
+
+        if (category) {
+            const [categoryResult] = await db
+                .select({ id: categories.id })
+                .from(categories)
+                .where(eq(categories.name, category))
+                .limit(1)
+
+
+            const postIds = await db
+                .select({ id: posts.id })
+                .from(posts)
+                .where(eq(posts.category_id, categoryResult.id))
+                .orderBy(desc(posts.uploaded_at))
+                .limit(limit)
+                .offset(offset)
+        }
 
         const postIds = await getPostsIds(limit, offset)
 
-        const posts = await Promise.all(
+        const { userId } = await verifySession()
+
+        const fetchedPosts = await Promise.all(
             postIds.map(async (id) => {
                 const postData = await getPost(userId || -1, id)
                 return {
@@ -162,8 +180,7 @@ export async function getPaginatedPosts(limit: number = 20, offset: number = 0) 
         )
 
         return {
-            posts,
-            userId,
+            fetchedPosts,
             hasMore: postIds.length === limit
         }
     }
@@ -177,8 +194,17 @@ export async function getPaginatedPosts(limit: number = 20, offset: number = 0) 
 }
 
 
-export async function getPaginatedPostsLiked(limit: number = 20, offset: number = 0, userId: number) {
+export async function getPaginatedPostsLiked(limit: number = 20, offset: number = 0) {
     try {
+
+        const { userId } = await verifySession()
+
+        if (!userId) {
+            return {
+                posts: [],
+                hasMore: false
+            }
+        }
 
         const postIds = await getLikedPostId(limit, offset, userId)
 
@@ -208,8 +234,17 @@ export async function getPaginatedPostsLiked(limit: number = 20, offset: number 
 }
 
 
-export async function getPaginatedPostsUploads(limit: number = 20, offset: number = 0, userId: number) {
+export async function getPaginatedPostsUploads(limit: number = 20, offset: number = 0) {
     try {
+
+        const { userId } = await verifySession()
+
+        if (!userId) {
+            return {
+                posts: [],
+                hasMore: false
+            }
+        }
 
         const postIds = await getPostsByUserId(limit, offset, userId)
 
@@ -238,3 +273,19 @@ export async function getPaginatedPostsUploads(limit: number = 20, offset: numbe
     }
 }
 
+
+export async function getCategories() {
+    try {
+        const results = await db
+            .select()
+            .from(categories)
+
+        return results.map((category) => ({
+            id: category.id,
+            name: category.name
+        }))
+    } catch (error) {
+        console.error('Error fetching categories:', error)
+        return []
+    }
+}
