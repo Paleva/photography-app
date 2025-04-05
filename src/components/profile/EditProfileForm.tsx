@@ -68,6 +68,7 @@ export function EditProfileForm({
                                 type: file.type,
                                 lastModified: Date.now()
                             });
+                            setCompressedFile(finalCompressedFile);
                         },
                         error(err) {
                             console.error(err);
@@ -92,6 +93,12 @@ export function EditProfileForm({
             onUpdate()
         }
     }, [state?.success, onUpdate])
+
+    useEffect(() => {
+        if (!state?.success) {
+            setEdit(false)
+        }
+    }, [state?.success])
 
     return (
         <>

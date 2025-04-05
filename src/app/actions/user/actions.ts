@@ -105,9 +105,6 @@ export async function postProfileInfo(
     formData: FormData
 ): Promise<UploadUserFormState> {
     try {
-
-
-
         const validatedFields = uploadUserSchema.safeParse({
             file: formData.get('avatar'),
             username: formData.get('username'),
