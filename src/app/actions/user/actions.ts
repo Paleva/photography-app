@@ -3,7 +3,7 @@ import { users, db, comments, likes, posts } from '@/db/schema'
 import { randomUUID } from 'crypto'
 import { eq } from 'drizzle-orm'
 import { writeFile } from 'fs/promises'
-import { uploadUserSchema, UploadUserFormState } from '@/app/api/upload/validaror'
+import { uploadUserSchema, UploadUserFormState } from '@/app/api/upload/validation'
 import { ChangePasswordFormSchema, FormState } from './validation'
 import path from 'path'
 import { getUser } from '../feed/actions'
@@ -36,10 +36,18 @@ export async function changePassword(state: FormState, formData: FormData): Prom
         }
 
         const { password, repeatedPassword } = validatedFields.data
-        console.log(validatedFields.data)
+
+        if (password !== repeatedPassword) {
+            return {
+                message: "Passwords do not match",
+                success: false
+            }
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10)
 
-        const [updatedUser] = await db.update(users).set({ password: hashedPassword }).where(eq(users.id, userId)).returning()
+
+        await db.update(users).set({ password: hashedPassword }).where(eq(users.id, userId))
 
         return {
             message: "Password successfully changed. Please login again",
@@ -64,13 +72,13 @@ export async function deleteAccount() {
     try {
         const [user] = await db.select().from(users).where(eq(users.id, userId))
 
-        const [resultPosts] = await db.delete(posts).where(eq(posts.user_id, user.id)).returning()
+        await db.delete(posts).where(eq(posts.user_id, user.id)).returning()
 
-        const [resultComments] = await db.delete(comments).where(eq(comments.user_id, user.id)).returning()
+        await db.delete(comments).where(eq(comments.user_id, user.id)).returning()
 
-        const [resultLikes] = await db.delete(likes).where(eq(likes.user_id, user.id)).returning()
+        await db.delete(likes).where(eq(likes.user_id, user.id)).returning()
 
-        const [result] = await db.delete(users).where(eq(users.id, user.id)).returning()
+        await db.delete(users).where(eq(users.id, user.id)).returning()
 
         return {
             message: "Successfully deleted account and everything associated with it",
@@ -108,7 +116,8 @@ export async function postProfileInfo(
         })
         if (!validatedFields.success) {
             return {
-                errors: validatedFields.error.flatten().fieldErrors
+                errors: validatedFields.error.flatten().fieldErrors,
+                success: false
             }
         }
 
@@ -117,21 +126,18 @@ export async function postProfileInfo(
         const user = await getUser(userId)
 
         if (file.size > 0) {
-            console.log("FILENAME:" + file.name)
-            const filename = file.name.replace(file.name, randomUUID())
+            const filename = file.name.replace(file.name, randomUUID()) + '.' + file.name.split('.').pop()
             const buffer = Buffer.from(await file.arrayBuffer())
             await writeFile(
-                path.join(process.cwd(), '/public/uploads/' + filename + '.' + file.name.split('.').pop()),
+                path.join(process.cwd(), '/uploads/' + filename),
                 buffer
             )
-            const pathname = '/uploads/' + filename + '.' + file.name.split('.').pop()
-            const result = await db.update(users).set({ profile_picture: pathname }).where(eq(users.id, userId)).returning()
-            console.log("FILE:" + result + "\n SIZE:" + file.size / 1024 / 1024 + "MB")
+            const filePath = '/api/file/' + filename
+            await db.update(users).set({ profile_picture: filePath }).where(eq(users.id, userId))
         }
 
         if (bio) {
-            const result = await db.update(users).set({ bio: bio }).where(eq(users.id, userId)).returning()
-            console.log("BIO:" + result)
+            await db.update(users).set({ bio: bio }).where(eq(users.id, userId))
         }
 
         if (username !== user?.username) {
@@ -140,20 +146,22 @@ export async function postProfileInfo(
                 return {
                     errors: {
                         username: ["Username already exists"]
-                    }
+                    },
+                    success: false
                 }
             }
-            const result = await db.update(users).set({ username: username }).where(eq(users.id, userId)).returning()
-            console.log("USERNAME:" + result)
+            await db.update(users).set({ username: username }).where(eq(users.id, userId))
         }
         return {
             message: 'Profile successfully updated',
+            success: true,
             errors: {},
         }
     } catch (error) {
         console.log(error)
         return {
             message: 'Error updating profile',
+            success: false,
             errors: {}
         }
     }

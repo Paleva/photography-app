@@ -2,7 +2,7 @@
 
 import { db, comments, users } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+// import { revalidatePath } from "next/cache";
 
 export async function getComments(postId: number) {
     try {

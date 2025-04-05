@@ -70,6 +70,17 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
         }
     }, [inView])
 
+
+    if (!posts.length) {
+        return (
+            <div className="w-full flex justify-center my-12">
+                {/* <div className="h-8 w-8 rounded-full border-t-2 border-primary animate-spin"></div>
+                 */}
+                <p className="text-center text-gray-500 my-8">Loading...</p>
+            </div>
+        )
+    }
+
     return (
         <div ref={gridRef}>
             <MasonryGrid>

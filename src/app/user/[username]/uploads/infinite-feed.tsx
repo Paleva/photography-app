@@ -41,14 +41,13 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
         setIsLoading(true)
         try {
             const result = await getPaginatedPostsUploads(POSTS_PER_PAGE, page * POSTS_PER_PAGE, posts[0]?.userId)
-
+            console.log('HAS MORE:' + result.hasMore)
             if (!result.posts.length || !result.hasMore) {
                 setHasMore(false)
             } else {
                 // Add unique instanceId to each new post
                 const postsWithUniqueIds = result.posts.map(post => ({
                     ...post,
-                    instanceId: post.id
                 }));
 
                 // Only balance the new posts, then append them to existing posts

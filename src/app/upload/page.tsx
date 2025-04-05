@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { CameraIcon } from 'lucide-react';
 import Link from "next/link";
+import Image from 'next/image';
 
 export default function UploadPage() {
 
@@ -217,7 +218,7 @@ export default function UploadPage() {
                         <CardContent className="p-6">
                             <div className="w-full aspect-square bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
                                 {previewUrl ? (
-                                    <img
+                                    <Image
                                         src={previewUrl}
                                         alt="Preview"
                                         className="max-w-full max-h-full object-contain"

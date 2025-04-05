@@ -10,6 +10,7 @@ export type UploadUserFormState =
             userId?: string[];
         };
         message?: string;
+        success?: boolean;
     }
     | undefined;
 
@@ -22,6 +23,7 @@ export type UploadPostFormState =
             description?: string[];
         };
         message?: string;
+        success?: boolean;
     }
     | undefined;
 

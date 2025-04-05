@@ -1,7 +1,7 @@
 'use server'
 
 import { posts, db, users, likes } from '@/db/schema'
-import { eq, desc, asc } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import { getLiked } from './like-actions'
 import { verifySession } from '@/app/(public)/auth/session'
 
@@ -10,7 +10,7 @@ export async function getPostsIds(limit: number = 20, offset: number = 0): Promi
         const results = await db
             .select({ id: posts.id })
             .from(posts)
-            .orderBy(asc(posts.uploaded_at))
+            .orderBy(desc(posts.uploaded_at))
             .limit(limit)
             .offset(offset)
 
@@ -129,7 +129,12 @@ export async function getPost(userId: number, postId: number) {
 export async function getUser(userId: number) {
     try {
         const results = await db
-            .select()
+            .select({
+                id: users.id,
+                username: users.username,
+                bio: users.bio,
+                profile_picture: users.profile_picture,
+            })
             .from(users)
             .where(eq(users.id, userId))
 
@@ -145,9 +150,6 @@ export async function getPaginatedPosts(limit: number = 20, offset: number = 0) 
         const { userId } = await verifySession()
 
         const postIds = await getPostsIds(limit, offset)
-        console.log('Post IDs:', postIds)
-        console.log('OFFSET:', offset)
-        console.log('LIMIT:', limit)
 
         const posts = await Promise.all(
             postIds.map(async (id) => {

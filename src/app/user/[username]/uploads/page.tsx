@@ -9,10 +9,10 @@ export default async function Page() {
         return <div>Not logged in</div>
     }
 
-    const initialData = await getPaginatedPostsUploads(12, 0, userId)
+    const initialData = await getPaginatedPostsUploads(20, 0, userId)
 
     return (
-        <div>
+        <div className='p-2'>
             <InfiniteFeed initialPosts={initialData.posts} />
         </div>
     )
