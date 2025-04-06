@@ -24,7 +24,16 @@ export async function GET(request: NextRequest, props: { params: Promise<{ file:
             );
         }
         const filename = params.file[0]
-        const filePath = path.join(process.cwd(), 'uploads', filename)
+
+        const sanitizedFilename = path.basename(filename)
+
+        const uploadDir = path.join(process.cwd(), 'uploads')
+        const filePath = path.join(uploadDir, filename)
+
+        const normalizedPath = path.normalize(filePath);
+        if (!normalizedPath.startsWith(uploadDir)) {
+            return new NextResponse('Access denied', { status: 403 });
+        }
 
         if (!fs.existsSync(filePath)) {
             return new NextResponse('File not found', { status: 404 })

@@ -84,7 +84,17 @@ export default function UploadPage() {
 
             if (!res.ok) {
                 const error = await res.json()
-                console.error(error.message)
+                if (error.message?.file) {
+                    setValidationError(error.message.file[0])
+                } else if (error.message?.title) {
+                    setValidationError(error.message.title[0])
+                } else if (error.message?.category) {
+                    setValidationError(error.message.category[0])
+                } else if (error.message) {
+                    setValidationError(error.message)
+                } else {
+                    setValidationError("Upload failed. Please try again.")
+                }
                 return
             }
             setUploadSuccess(true)
@@ -218,7 +228,7 @@ export default function UploadPage() {
                         <CardContent className="p-6">
                             <div className="w-full aspect-square bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
                                 {previewUrl ? (
-                                    <Image
+                                    <img
                                         src={previewUrl}
                                         alt="Preview"
                                         className="max-w-full max-h-full object-contain"
