@@ -7,7 +7,7 @@ const userRoute = ['/user']
 
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname;
-    console.log("\nPATH:\n" + path)
+    console.log("\nPATH:\n" + path + "\n");
 
     if (publicRoutes.some(route => path === route || path.startsWith(`${route}?`))) {
         return NextResponse.next();
@@ -29,7 +29,7 @@ export default async function middleware(req: NextRequest) {
 export const config = {
     matcher: [
         '/upload',
-        '/api/:path*',
+        '/api/upload/:path*',
         '/user/:path*',
     ]
 }

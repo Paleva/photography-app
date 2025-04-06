@@ -5,34 +5,19 @@ import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PostCardFooter } from "@/components/feed/PostcardFooter"
 import Link from "next/link"
+import { PostData } from "@/types/postdata"
 
-// Define the props type based on what getPost returns
-interface ClientPostCardProps {
-    post: {
-        id: number
-        file_path: string
-        title: string
-        description: string
-    }
-    user: {
-        id: number
-        username: string
-        profile_picture?: string
-    }
-    isVertical: boolean
-    liked: boolean
-    likesCount: number
-    userId: number
+function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export function ClientPostCard({
     post,
     user,
-    isVertical,
     liked,
-    likesCount,
     userId
-}: ClientPostCardProps) {
+}: PostData) {
+
     if (post.id === -1) {
         return (
             <Card className="overflow-hidden relative">
@@ -50,7 +35,7 @@ export function ClientPostCard({
                 <Image
                     src={post.file_path}
                     width={500}
-                    height={isVertical ? 700 : 500}
+                    height={post.isVertical ? 700 : 500}
                     className="w-full h-full object-cover rounded-lg"
                     alt={post.title || "Post image"}
                 />
@@ -75,20 +60,23 @@ export function ClientPostCard({
 
                 {/* Bottom gradient overlay */}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 text-white">
-                    <div className="mb-3">
-                        <Link href={`/post/${post.id}`}>
-                            <h3 className="text-xl font-bold mb-1">{post.title}</h3>
+                    <div className="mb-3 flex items-center justify-between">
+                        <div className="flex-col items-center gap-2">
+                            <Link href={`/post/${post.id}`}>
+                                <h3 className="text-xl font-bold mb-1">{post.title}</h3>
+                            </Link>
                             <p className="text-sm text-white/80 line-clamp-2">
                                 {post.description}
                             </p>
-                        </Link>
+                        </div>
+                        <h4 className="items-center justify-end font-bold">{capitalizeFirstLetter(post.category)}</h4>
                     </div>
 
                     <PostCardFooter
                         postId={post.id}
                         userId={userId}
                         initialLiked={liked}
-                        initialLikes={likesCount}
+                        initialLikes={post.likes || 0}
                     />
                 </div>
             </div>

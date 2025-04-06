@@ -15,7 +15,6 @@ interface PostCardFooterProps {
 
 export function PostCardFooter({ postId, userId, initialLiked, initialLikes }: PostCardFooterProps) {
     const [showComments, setShowComments] = useState(false)
-
     const toggleComments = () => {
         setShowComments(prev => !prev)
     }

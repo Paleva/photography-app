@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { InfiniteFeed } from '@/app/(home)/infinite-feed'
+import { InfiniteFeed } from '@/components/feed/infinite-feed'
 import CategorySelector from '@/components/feed/CategorySelector'
 
 // import { getCategories, getPaginatedPosts } from '@/app/actions/feed/actions'
@@ -19,7 +19,6 @@ export default function FeedContainer({ initialPosts, categories, getPosts }: {
     const handleCategoryChange = async (category: string) => {
         setCategory(category)
     }
-
     return (
         <div>
             <div>

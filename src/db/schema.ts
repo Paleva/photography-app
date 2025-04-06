@@ -27,7 +27,7 @@ export const posts = pgTable("posts", {
     id: serial().primaryKey(),
     title: varchar({ length: 255 }),
     filename: varchar({ length: 255 }),
-    description: text(),
+    description: text().default('No description'),
     user_id: integer().references(() => users.id).notNull(),
     file_path: text().notNull(),
     real_path: text().notNull(),

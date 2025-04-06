@@ -1,9 +1,53 @@
 'use server'
 
 import { posts, db, users, likes, categories } from '@/db/schema'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, and } from 'drizzle-orm'
 import { getLiked } from './like-actions'
 import { verifySession } from '@/app/(public)/auth/session'
+
+export async function getPostsIdByCategoryId(categoryId: number, limit: number = 20, offset: number = 0, userId: number = -1, liked: boolean = false): Promise<number[]> {
+    try {
+        if (userId !== -1) {
+            if (liked) {
+                const result = await db
+                    .select({ id: posts.id })
+                    .from(posts)
+                    .innerJoin(likes, eq(posts.id, likes.post_id))
+                    .where(and(eq(posts.category_id, categoryId), eq(likes.user_id, userId)))
+                    .orderBy(desc(posts.uploaded_at))
+                    .limit(limit)
+                    .offset(offset)
+                const postIds = result.map((post) => post.id)
+                return postIds
+            } else {
+                const result = await db
+                    .select({ id: posts.id })
+                    .from(posts)
+                    .where(and(eq(posts.category_id, categoryId), eq(posts.user_id, userId)))
+                    .orderBy(desc(posts.uploaded_at))
+                    .limit(limit)
+                    .offset(offset)
+                const postIds = result.map((post) => post.id)
+                return postIds
+            }
+        } else {
+            const results = await db
+                .select({ id: posts.id })
+                .from(posts)
+                .where(eq(posts.category_id, categoryId))
+                .orderBy(desc(posts.uploaded_at))
+                .limit(limit)
+                .offset(offset)
+
+            const postIds = results.map((post) => post.id)
+            return postIds
+        }
+    }
+    catch (error) {
+        console.error('Error fetching posts:', error)
+        return []
+    }
+}
 
 export async function getPostsIds(limit: number = 20, offset: number = 0): Promise<number[]> {
     try {
@@ -22,22 +66,7 @@ export async function getPostsIds(limit: number = 20, offset: number = 0): Promi
     }
 }
 
-export async function getPostByUser(userId: number): Promise<any[]> {
-    try {
-        const results = await db
-            .select()
-            .from(posts)
-            .where(eq(posts.user_id, userId))
-            .limit(1)
-
-        return results
-    } catch (error) {
-        console.error('Error fetching posts:', error)
-        return []
-    }
-}
-
-export async function getPostsByUserId(limit: number = 20, offset: number = 0, userId: number): Promise<number[]> {
+export async function getPostsIdByUserId(limit: number = 20, offset: number = 0, userId: number): Promise<number[]> {
     try {
         const results = await db
             .select({ id: posts.id })
@@ -86,7 +115,15 @@ export async function getPost(userId: number, postId: number) {
     try {
         const results = await db
             .select({
-                post: posts,
+                post: {
+                    id: posts.id,
+                    file_path: posts.file_path,
+                    title: posts.title,
+                    description: posts.description,
+                    likes: posts.likes,
+                    isVertical: posts.isvertical,
+                    category: categories.name
+                },
                 user: {
                     id: users.id,
                     username: users.username,
@@ -95,15 +132,14 @@ export async function getPost(userId: number, postId: number) {
             })
             .from(posts)
             .innerJoin(users, eq(posts.user_id, users.id))
+            .innerJoin(categories, eq(posts.category_id, categories.id))
             .where(eq(posts.id, postId))
             .limit(1);
 
         const { post, user } = results[0];
         const liked = await getLiked(userId, post.id)
-        const likesCount = post.likes
-        const isVertical = post.isvertical
 
-        return { post, user, isVertical, liked, likesCount, userId }
+        return { post, user, liked, userId }
     }
     catch (error) {
         console.error('Error fetching post:', error)
@@ -112,15 +148,18 @@ export async function getPost(userId: number, postId: number) {
                 id: -1,
                 file_path: '/placeholder-error-image.png',
                 title: 'Failed to fetch post',
-                description: 'This post failed to load. Please try again later.'
+                description: 'This post failed to load. Please try again later.',
+                likes: 0,
+                isVertical: false,
+                category: 'Unknown',
             },
             user: {
+                id: -1,
                 username: 'Unknown',
-                id: -1
+                profile_picture: '/placeholder-error-image.png',
             },
-            isVertical: false,
             liked: false,
-            likes: 0
+            userId: -1
         }
     }
 }
@@ -148,6 +187,8 @@ export async function getUser(userId: number) {
 export async function getPaginatedPosts(limit: number = 20, offset: number = 0, category: string = '') {
     try {
 
+        let postIds: number[] = []
+
         if (category) {
             const [categoryResult] = await db
                 .select({ id: categories.id })
@@ -155,33 +196,25 @@ export async function getPaginatedPosts(limit: number = 20, offset: number = 0, 
                 .where(eq(categories.name, category))
                 .limit(1)
 
-
-            const postIds = await db
-                .select({ id: posts.id })
-                .from(posts)
-                .where(eq(posts.category_id, categoryResult.id))
-                .orderBy(desc(posts.uploaded_at))
-                .limit(limit)
-                .offset(offset)
+            postIds = await getPostsIdByCategoryId(categoryResult.id, limit, offset)
+        } else {
+            postIds = await getPostsIds(limit, offset)
         }
-
-        const postIds = await getPostsIds(limit, offset)
 
         const { userId } = await verifySession()
 
-        const fetchedPosts = await Promise.all(
+        const posts = await Promise.all(
             postIds.map(async (id) => {
                 const postData = await getPost(userId || -1, id)
                 return {
-                    id,
                     ...postData
                 }
             })
         )
 
         return {
-            fetchedPosts,
-            hasMore: postIds.length === limit
+            posts,
+            hasMore: postIds.length === limit,
         }
     }
     catch (error) {
@@ -194,11 +227,10 @@ export async function getPaginatedPosts(limit: number = 20, offset: number = 0, 
 }
 
 
-export async function getPaginatedPostsLiked(limit: number = 20, offset: number = 0) {
+export async function getPaginatedPostsLiked(limit: number = 20, offset: number = 0, category: string = '') {
     try {
 
         const { userId } = await verifySession()
-
         if (!userId) {
             return {
                 posts: [],
@@ -206,7 +238,19 @@ export async function getPaginatedPostsLiked(limit: number = 20, offset: number 
             }
         }
 
-        const postIds = await getLikedPostId(limit, offset, userId)
+        let postIds: number[] = []
+        if (category) {
+            const [categoryResult] = await db
+                .select({ id: categories.id })
+                .from(categories)
+                .where(eq(categories.name, category))
+                .limit(1)
+
+            postIds = await getPostsIdByCategoryId(categoryResult.id, limit, offset, userId, true)
+        } else {
+            postIds = await getLikedPostId(limit, offset, userId)
+        }
+
 
         const posts = await Promise.all(
             postIds.map(async (id) => {
@@ -234,7 +278,7 @@ export async function getPaginatedPostsLiked(limit: number = 20, offset: number 
 }
 
 
-export async function getPaginatedPostsUploads(limit: number = 20, offset: number = 0) {
+export async function getPaginatedPostsUploads(limit: number = 20, offset: number = 0, category: string = '') {
     try {
 
         const { userId } = await verifySession()
@@ -246,7 +290,26 @@ export async function getPaginatedPostsUploads(limit: number = 20, offset: numbe
             }
         }
 
-        const postIds = await getPostsByUserId(limit, offset, userId)
+        let postIds: number[] = []
+
+        if (category) {
+            const [categoryResult] = await db
+                .select({ id: categories.id })
+                .from(categories)
+                .where(eq(categories.name, category))
+                .limit(1)
+
+            postIds = await getPostsIdByCategoryId(categoryResult.id, limit, offset, userId)
+            if (postIds.length === 0) {
+                return {
+                    posts: [],
+                    hasMore: false
+                }
+            }
+        } else {
+            postIds = await getPostsIdByUserId(limit, offset, userId)
+        }
+
 
         const posts = await Promise.all(
             postIds.map(async (id) => {

@@ -3,21 +3,34 @@
 import { useEffect, useState, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { MasonryGrid } from '@/components/layouts/masonry-grid'
-import { ClientPostCard } from '@/components/feed/postcard'
-import { getPaginatedPostsUploads } from '@/app/actions/feed/actions'
+import { ClientPostCard } from './postcard'
+// import { getPaginatedPosts } from '../actions/feed/actions'
 
 const POSTS_PER_PAGE = 20
 
-export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
-    // Add instanceId to track unique instances of posts
-    const [posts, setPosts] = useState<any[]>(initialPosts.map(post => ({
-        ...post,
-        instanceId: post.id
-    })))
+interface InfiniteFeedProps {
+    initialPosts: any[]
+    category?: string
+    getPosts: (limit?: number, offset?: number, category?: string) => Promise<{
+        posts: any[]
+        hasMore: boolean
+    }>
+}
+
+export function InfiniteFeed({ initialPosts, category = '', getPosts }: InfiniteFeedProps) {
+
+    const [posts, setPosts] = useState<any[]>(
+        initialPosts.map((post) => ({
+            ...post,
+            instanceId: post.post.id
+        })) || []
+    )
     const [page, setPage] = useState(1) // Start at 1 since we already have the first page
     const [isLoading, setIsLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
+
     const gridRef = useRef<HTMLDivElement>(null)
+    const previousCategory = useRef<string>(category)
 
     const { ref, inView } = useInView({
         threshold: 0,
@@ -35,19 +48,55 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
         });
     };
 
+    useEffect(() => {
+        if (previousCategory.current !== category) {
+            setPage(1)
+            setHasMore(true)
+
+            const loadInitialPostsForCategory = async () => {
+                setIsLoading(true)
+                try {
+                    const result = await getPosts(POSTS_PER_PAGE, 0, category)
+                    console.log('result', result)
+                    console.log('result.posts', result.posts)
+                    console.log('category', category)
+                    if (result.posts.length === 0 || !result.hasMore) {
+                        setHasMore(false)
+                        setIsLoading(false)
+                    }
+
+                    const postsWithUniqueIds = result.posts.map(post => ({
+                        ...post,
+                        instanceId: post.post.id
+                    }));
+                    const newPosts = distributeNewPostsEvenly(postsWithUniqueIds)
+                    setPosts(newPosts)
+                } catch (error) {
+                    console.error('Error loading initial posts:', error)
+                }
+                finally {
+                    setIsLoading(false)
+                }
+            }
+            loadInitialPostsForCategory()
+            previousCategory.current = category
+        }
+    }, [category])
+
     const loadMorePosts = async () => {
         if (isLoading || !hasMore) return
 
         setIsLoading(true)
         try {
-            const result = await getPaginatedPostsUploads(POSTS_PER_PAGE, page * POSTS_PER_PAGE)
-            console.log('HAS MORE:' + result.hasMore)
+            const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE, category)
+
             if (!result.posts.length || !result.hasMore) {
                 setHasMore(false)
             } else {
                 // Add unique instanceId to each new post
                 const postsWithUniqueIds = result.posts.map(post => ({
                     ...post,
+                    instanceId: post.post.id
                 }));
 
                 // Only balance the new posts, then append them to existing posts
@@ -62,6 +111,7 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
         }
     }
 
+
     // Load more posts when the user scrolls to the bottom
     useEffect(() => {
         if (inView) {
@@ -69,18 +119,32 @@ export function InfiniteFeed({ initialPosts }: { initialPosts: any[] }) {
         }
     }, [inView])
 
+
+    if (isLoading && posts.length === 0) {
+        return (
+            <div className="w-full flex justify-center my-12">
+                <div className="h-8 w-8 rounded-full border-t-2 border-primary animate-spin"></div>
+            </div>
+        )
+    }
+    if (!posts.length && !isLoading) {
+        return (
+            <div className="w-full flex justify-center my-12">
+                <p className="text-center text-gray-500 my-8">No photos to load</p>
+            </div>
+        )
+    }
+
     return (
         <div ref={gridRef}>
             <MasonryGrid>
                 {posts.map((postData) => (
                     // Use the instanceId as the key instead of just postData.id
-                    <div key={postData.post.id || `${postData.id}-${Math.random()}`} className="mb-6 hover:z-10 transition-all duration-300">
+                    <div key={postData.post.id} className="mb-6 hover:z-10 transition-all duration-300">
                         <ClientPostCard
                             post={postData.post}
                             user={postData.user}
-                            isVertical={postData.isVertical}
                             liked={postData.liked}
-                            likesCount={postData.likesCount}
                             userId={postData.userId}
                         />
                     </div>
