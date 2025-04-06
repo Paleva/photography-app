@@ -32,4 +32,5 @@ export type SessionPayload = {
     userId: string | number;
     username: string;
     expiresAt: Date;
+    role: string;
 };

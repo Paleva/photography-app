@@ -37,22 +37,13 @@ export async function verifySession() {
         return { isAuth: false };
     }
 
-    return { isAuth: true, userId: Number(session.userId), username: String(session.username) };
+    return { isAuth: true, userId: Number(session.userId), username: String(session.username), role: String(session.role) };
 }
 
 
-export async function createSession(id: number, username: string) {
+export async function createSession(id: number, username: string, role: string = 'user') {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-
-
-    // const data = await db
-    //     .insert(sessions)
-    //     .values({ user_id: id, expires_at: expiresAt })
-    //     .returning({ id: sessions.session_id })
-
-    // const sessionId = data[0].id
-
-    const session = await encrypt({ userId: id, username, expiresAt })
+    const session = await encrypt({ userId: id, username, expiresAt, role })
 
         ; (await cookies()).set('session', session, {
             httpOnly: true,

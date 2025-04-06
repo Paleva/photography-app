@@ -1,4 +1,6 @@
 'use client'
+// TODO - Refactor this page to use move client interactive parts to
+// seperate components.
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +17,6 @@ import {
 } from "@/components/ui/select";
 import { CameraIcon } from 'lucide-react';
 import Link from "next/link";
-import Image from 'next/image';
 
 export default function UploadPage() {
 
