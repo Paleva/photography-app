@@ -1,5 +1,5 @@
 'use client'
-import { RegisterForm } from "@/components/ui/register-form"
+import { RegisterForm } from "@/components/auth/register-form"
 import { CameraIcon } from "lucide-react"
 import Image from 'next/image'
 import Link from "next/link"

@@ -1,6 +1,6 @@
 'use client'
 
-import { LoginForm } from "@/components/ui/login-form"
+import { LoginForm } from "@/components/auth/login-form"
 import Image from 'next/image'
 import Link from "next/link"
 import { CameraIcon } from "lucide-react"

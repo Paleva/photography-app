@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { MasonryGrid } from '@/components/layouts/masonry-grid'
 import { ClientPostCard } from './postcard'
-// import { getPaginatedPosts } from '../actions/feed/actions'
 
 const POSTS_PER_PAGE = 20
 

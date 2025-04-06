@@ -22,7 +22,7 @@ export default async function Page() {
         <FeedContainer
             initialPosts={initialData.posts}
             categories={categoriesNames}
-            getPosts={getPaginatedPostsLiked} // Placeholder for getPosts function
+            getPosts={getPaginatedPostsLiked}
         />
     )
 }

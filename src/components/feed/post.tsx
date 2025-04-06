@@ -10,7 +10,7 @@ import { LikeButton } from "./LikeButton"
 
 export async function PostCard({ id }: { id: number }) {
     const { userId } = await verifySession()
-    const { post, user, isVertical, liked, likesCount } = await getPost(userId || -1, id);
+    const { post, user, liked } = await getPost(userId || -1, id);
 
     if (post.id === -1) {
         return (
@@ -29,8 +29,8 @@ export async function PostCard({ id }: { id: number }) {
                 <div className="w-full h-full flex items-center justify-center">
                     <Image
                         src={post.file_path}
-                        width={isVertical ? 500 : 700}
-                        height={isVertical ? 700 : 500}
+                        width={post.isVertical ? 500 : 700}
+                        height={post.isVertical ? 700 : 500}
                         className="object-contain  rounded-lg  "
                         alt={post.title || "Post image"}
                         priority
@@ -74,7 +74,7 @@ export async function PostCard({ id }: { id: number }) {
                             postId={post.id}
                             userId={userId || -1}
                             initialLiked={liked}
-                            initialLikes={likesCount || 0} />
+                            initialLikes={post.likes || 0} />
                     </div>
                 </div>
             </Card>

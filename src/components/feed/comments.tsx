@@ -30,7 +30,6 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
         try {
             const newComment = await addComment(postId, userId, comment);
             if (newComment) {
-                console.log("New comment added:", newComment);
                 setComments((prev) => [...prev, newComment]);
                 setComment("");
                 setTimeout(() => {
@@ -85,7 +84,7 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
                 <Button
                     onClick={handleSubmitComment}
                     disabled={!comment.trim() || userId === -1}
-                    size="sm"
+                // size="sm"
                 >
                     Post
                 </Button>
