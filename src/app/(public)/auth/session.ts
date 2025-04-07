@@ -1,10 +1,11 @@
 import 'server-only'
 
-// import { sessions, db } from "@/db/schema"
+import { users, db } from "@/db/schema"
 import { SessionPayload } from "./definitions"
 import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers";
 import { redirect } from 'next/navigation';
+import { eq } from 'drizzle-orm';
 
 const key = new TextEncoder().encode(process.env.SESSION_SECRET)
 
@@ -41,9 +42,10 @@ export async function verifySession() {
 }
 
 
-export async function createSession(id: number, username: string, role: string = 'user') {
+export async function createSession(id: number, username: string) {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    const session = await encrypt({ userId: id, username, expiresAt, role })
+    const [userRole] = await db.select({ role: users.role }).from(users).where(eq(users.id, id))
+    const session = await encrypt({ userId: id, username, expiresAt, role: userRole.role })
 
         ; (await cookies()).set('session', session, {
             httpOnly: true,
