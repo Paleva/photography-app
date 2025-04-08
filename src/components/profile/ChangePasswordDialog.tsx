@@ -66,9 +66,9 @@ export function ChangePasswordDialog() {
                                     className="my-2"
                                 />
                                 {state?.errors?.password && (
-                                    <p className="text-red-500 text-md">
-                                        {state.errors.password}
-                                    </p>
+                                    <div className="p-3 mt-2 bg-red-100 text-red-700 rounded-md border border-red-200 flex items-center">
+                                        <p className='text-red-500 text-md'>{state.errors.password}</p>
+                                    </div>
                                 )}
                                 <Label htmlFor="repeat-new-password" className="block text-sm font-medium my-2">
                                     Repeat new password
@@ -81,9 +81,9 @@ export function ChangePasswordDialog() {
                                     className="my-2"
                                 />
                                 {state?.errors?.repeatedPassword && (
-                                    <p className="text-red-500 text-md">
-                                        {state.errors.repeatedPassword}
-                                    </p>
+                                    <div className="p-3 mt-2 bg-red-100 text-red-700 rounded-md border border-red-200 flex items-center">
+                                        <p className='text-red-500 text-md'>{state.errors.repeatedPassword}</p>
+                                    </div>
                                 )}
                                 <Button className="my-2 w-full" disabled={pending} aria-disabled={pending} type='submit' variant='default'>Change password</Button>
                             </form>

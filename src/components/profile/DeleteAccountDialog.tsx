@@ -59,7 +59,7 @@ export function DeleteAccountDialog() {
                         <div className="flex justify-between items-center">
                             <Button onClick={handleClose} variant="outline">Cancel</Button>
                             <form action={action}>
-                                <Button type='submit' size='lg' aria-disabled={pending} variant="destructive">Delete Account</Button>
+                                <Button type='submit' size='lg' aria-disabled={pending} disabled={pending} variant="destructive">Delete Account</Button>
                             </form>
                         </div>
                     ) : (
@@ -69,7 +69,9 @@ export function DeleteAccountDialog() {
                     )}
 
                     {state?.error && (
-                        <p className='text-red-500 text-md'>{state.error}</p>
+                        <div className="p-3 mt-2 bg-red-100 text-red-700 rounded-md border border-red-200 flex items-center">
+                            <p className='text-red-500 text-md'>{state.error}</p>
+                        </div>
                     )}
                 </DialogContent>
             </Dialog>
