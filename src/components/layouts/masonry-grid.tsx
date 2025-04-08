@@ -15,8 +15,8 @@ export function MasonryGrid({ children, className = '' }: MasonryGridProps) {
     const breakpointColumnsObj = {
         default: 4, // Default to 4 columns
         1400: 3, // 3 columns for large devices
-        1024: 2, // 2 columns for medium devices
-        640: 1  // 1 column for small devices
+        1200: 2, // 2 columns for medium devices
+        800: 1  // 1 column for small devices
     }
 
     // Force layout recalculation when children change

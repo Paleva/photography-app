@@ -44,7 +44,7 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
         }
     };
     return (
-        <div className="border-t pt-4 px-4 pb-2">
+        <div className="border-t pt-4  pb-2">
 
             <ScrollArea className="h-[200px] ">
                 {isLoading ? (
