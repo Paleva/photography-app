@@ -1,8 +1,9 @@
 
 // TODO - Implement loading skeleton
-// TODO - rewrite this because it looks like shit and doesn't work properly half the time
-// TODO - implement deleting action for user posts
 
+
+import { verifySession } from '@/app/(public)/auth/session'
+import { getPost } from '@/app/actions/feed/actions'
 import { PostCard } from '@/components/feed/post'
 export default async function PostPage({
     params
@@ -11,8 +12,14 @@ export default async function PostPage({
 }) {
     const { id } = await params
     const postId = parseInt(id, 10)
+    const session = await verifySession()
+    const { post, user, liked, } = await getPost(session.userId || -1, postId);
 
     return (
-        <PostCard id={postId} />
+        <PostCard
+            post={post}
+            user={user}
+            liked={liked}
+            userId={session.userId || -1} />
     )
 }

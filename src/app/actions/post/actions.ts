@@ -23,7 +23,7 @@ export async function deleteFunction(
         const validatedFields = deletePostFormSchema.safeParse({
             postId: formData.get('postId'),
         })
-        console.log(validatedFields)
+
         if (!validatedFields.success) {
             return {
                 error: "Error while deleting post. Try again later",
