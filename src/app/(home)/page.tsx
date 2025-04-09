@@ -1,5 +1,6 @@
 import { getCategories, getPaginatedPosts } from '../actions/feed/actions'
 import FeedContainer from '@/components/feed/FeedContainer'
+import Loading from './loading'
 
 export default async function Page() {
 
@@ -16,7 +17,7 @@ export default async function Page() {
         <FeedContainer
             initialPosts={initialData.posts}
             categories={categoriesNames}
-            getPosts={getPaginatedPosts} // Placeholder for getPosts function
+            getPosts={getPaginatedPosts}
         />
     )
 }

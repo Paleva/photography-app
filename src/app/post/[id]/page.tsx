@@ -15,15 +15,10 @@ export default async function PostPage({
     const { post, user, liked, } = await getPost(session.userId, postId);
 
     return (
-        <>
-            <Loading />
-            {/* <Suspense fallback={<Loading />}>
-                <PostCard
-                    post={post}
-                    user={user}
-                    liked={liked}
-                    userId={session.userId} />
-            </Suspense> */}
-        </>
+        <PostCard
+            post={post}
+            user={user}
+            liked={liked}
+            userId={session.userId} />
     )
 }
