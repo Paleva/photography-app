@@ -205,7 +205,7 @@ export async function getPaginatedPosts(limit: number = 20, offset: number = 0, 
 
         const posts = await Promise.all(
             postIds.map(async (id) => {
-                const postData = await getPost(userId || -1, id)
+                const postData = await getPost(userId, id)
                 return {
                     ...postData
                 }
@@ -254,7 +254,7 @@ export async function getPaginatedPostsLiked(limit: number = 20, offset: number 
 
         const posts = await Promise.all(
             postIds.map(async (id) => {
-                const postData = await getPost(userId || -1, id)
+                const postData = await getPost(userId, id)
                 return {
                     id,
                     ...postData
@@ -313,7 +313,7 @@ export async function getPaginatedPostsUploads(limit: number = 20, offset: numbe
 
         const posts = await Promise.all(
             postIds.map(async (id) => {
-                const postData = await getPost(userId || -1, id)
+                const postData = await getPost(userId, id)
                 return {
                     id,
                     ...postData

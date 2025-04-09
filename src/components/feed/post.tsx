@@ -36,7 +36,7 @@ export function PostCard({
     // We consider it a touch device if it's mobile OR it's a touch device without hover capability
     const isTouchDevice = isMobile || (hasTouchCapability && window.matchMedia('(hover: none)').matches);
 
-    const handleCardClick = (e: React.MouseEvent) => {
+    const handleCardClick = () => {
         if (isTouchDevice) {
             setIsOverlayVisible(prev => !prev);
         }

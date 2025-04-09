@@ -28,7 +28,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ file:
         const sanitizedFilename = path.basename(filename)
 
         const uploadDir = path.join(process.cwd(), 'uploads')
-        const filePath = path.join(uploadDir, filename)
+        const filePath = path.join(uploadDir, sanitizedFilename)
 
         const normalizedPath = path.normalize(filePath);
         if (!normalizedPath.startsWith(uploadDir)) {

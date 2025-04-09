@@ -35,7 +35,7 @@ export async function verifySession() {
     const session = await decrypt(cookie);
 
     if (!session) {
-        return { isAuth: false };
+        return { isAuth: false, userId: -1, username: '', role: '' };
     }
 
     return { isAuth: true, userId: Number(session.userId), username: String(session.username), role: String(session.role) };
@@ -44,7 +44,13 @@ export async function verifySession() {
 
 export async function createSession(id: number, username: string) {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    const [userRole] = await db.select({ role: users.role }).from(users).where(eq(users.id, id))
+
+    let [userRole] = await db.select({ role: users.role }).from(users).where(eq(users.id, id))
+
+    if (!userRole) {
+        userRole = { role: 'user' }
+    }
+
     const session = await encrypt({ userId: id, username, expiresAt, role: userRole.role })
 
         ; (await cookies()).set('session', session, {
