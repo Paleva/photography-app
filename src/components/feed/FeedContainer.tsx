@@ -9,7 +9,7 @@ import CategorySelector from '@/components/feed/CategorySelector'
 export default function FeedContainer({ initialPosts, categories, getPosts }: {
     initialPosts: any[]
     categories: string[]
-    getPosts: (limit?: number, offset?: number, category?: string) => Promise<{
+    getPosts: (limit?: number, offset?: number, category?: string, userId?: number) => Promise<{
         posts: any[],
         hasMore: boolean
     }>

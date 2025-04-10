@@ -10,7 +10,7 @@ const POSTS_PER_PAGE = 20
 interface InfiniteFeedProps {
     initialPosts: any[]
     category?: string
-    getPosts: (limit?: number, offset?: number, category?: string) => Promise<{
+    getPosts: (limit?: number, offset?: number, category?: string, userId?: number) => Promise<{
         posts: any[]
         hasMore: boolean
     }>

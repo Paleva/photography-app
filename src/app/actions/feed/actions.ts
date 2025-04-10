@@ -336,6 +336,45 @@ export async function getPaginatedPostsUploads(limit: number = 20, offset: numbe
     }
 }
 
+export async function getPaginatedPostsUser(limit: number = 20, offset: number = 0, category: string = '', userId: number = -1) {
+    try {
+        let postIds: number[] = []
+
+        if (category) {
+            const [categoryResult] = await db
+                .select({ id: categories.id })
+                .from(categories)
+                .where(eq(categories.name, category))
+                .limit(1)
+
+            postIds = await getPostsIdByCategoryId(categoryResult.id, limit, offset, userId)
+        } else {
+            postIds = await getPostsIdByUserId(limit, offset, userId)
+        }
+
+        const posts = await Promise.all(
+            postIds.map(async (id) => {
+                const postData = await getPost(userId, id)
+                return {
+                    id,
+                    ...postData
+                }
+            })
+        )
+
+        return {
+            posts,
+            hasMore: postIds.length === limit,
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            posts: [],
+            hasMore: false
+        }
+    }
+}
+
 
 export async function getCategories() {
     try {

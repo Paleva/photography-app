@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-export function UserCard({ username, profile_picture }: { username: string, profile_picture: string }) {
+export function UserCard({ username, profile_picture, bio }: { username: string, profile_picture: string, bio: string }) {
     return (
         <div>
             <div className='flex items-center gap-3'>
@@ -11,6 +11,11 @@ export function UserCard({ username, profile_picture }: { username: string, prof
                     <p className="font-medium text-2xl">{username}</p>
                 </div>
             </div>
+            {bio && (
+                <div className="flex flex-col my-2">
+                    <p className="text-md">{bio}</p>
+                </div>
+            )}
         </div>
     )
 }

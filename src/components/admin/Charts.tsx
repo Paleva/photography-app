@@ -23,6 +23,7 @@ type UserData = {
 type PostData = {
     name: string;
     likes: number;
+    id: number
 };
 
 type CommentDistributionData = {
@@ -41,6 +42,40 @@ interface AdminChartsProps {
     popularPosts: PostData[];
     commentDistribution: CommentDistributionData[];
     engagementData: EngagementDataPoint[];
+}
+
+const CustomYAxisPosts = (props: any) => {
+    const { x, y, payload, index, data } = props;
+
+    const post = data[index]
+    const postId = post.id;
+
+    return (
+        <g transform={`translate(${x},${y})`}>
+            <a href={`/post/${postId}`} className="text-blue-500 hover:underline">
+                <text x={-3} y={0} dy={3} textAnchor="end" fill="#666">
+                    {payload.value.name || payload.value}
+                </text>
+            </a>
+        </g>
+    );
+};
+
+const CustomYAxisUsers = (props: any) => {
+    const { x, y, payload, index, data } = props
+
+    const user = data[index]
+    const userName = user.name;
+
+    return (
+        <g transform={`translate(${x},${y})`}>
+            <a href={`/${userName}`} className="text-blue-500 hover:underline">
+                <text x={-3} y={0} dy={3} textAnchor="end" fill="#666">
+                    {payload.value.name || payload.value}
+                </text>
+            </a>
+        </g>
+    );
 }
 
 export default function AdminCharts({
@@ -145,7 +180,10 @@ export default function AdminCharts({
                             <BarChart data={topUsers} layout="vertical">
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis type="number" />
-                                <YAxis dataKey="name" type="category" width={100} />
+                                <YAxis dataKey="name"
+                                    type="category"
+                                    width={100}
+                                    tick={(props) => <CustomYAxisUsers {...props} data={topUsers} />} />
                                 <Tooltip />
                                 <Bar dataKey="posts" fill="#8884d8" />
                             </BarChart>
@@ -162,7 +200,10 @@ export default function AdminCharts({
                             <BarChart data={popularPosts} layout="vertical">
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis type="number" />
-                                <YAxis dataKey="name" type="category" width={120} />
+                                <YAxis dataKey="name"
+                                    type="category"
+                                    width={120}
+                                    tick={(props) => <CustomYAxisPosts {...props} data={popularPosts} />} />
                                 <Tooltip />
                                 <Bar dataKey="likes" fill="#82ca9d" />
                             </BarChart>
