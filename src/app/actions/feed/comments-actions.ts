@@ -1,8 +1,8 @@
 'use server'
 
+import { verifySession } from "@/app/(public)/auth/session";
 import { db, comments, users } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
-// import { revalidatePath } from "next/cache";
 
 export async function getComments(postId: number) {
     try {
@@ -32,6 +32,12 @@ export async function getComments(postId: number) {
 export async function addComment(postId: number, userId: number, content: string) {
     try {
         if (!content.trim() || userId === -1) return null;
+
+        const sesion = await verifySession();
+        if (!sesion.isAuth || sesion.userId !== userId) {
+            return null;
+        }
+
 
         const [result] = await db.insert(comments)
             .values({

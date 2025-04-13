@@ -41,7 +41,7 @@ export function ProfileEditor({
             <div className="flex gap-2 justify-start">
             </div>
             <div className="flex gap-2 justify-end">
-                <DeleteAccountDialog />
+                <DeleteAccountDialog userId={userId} />
                 <ChangePasswordDialog />
             </div>
         </div>

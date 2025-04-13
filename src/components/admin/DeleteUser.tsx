@@ -8,7 +8,7 @@ import { X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Input } from "../ui/input"
 
-export function DeleteAccountDialog({ userId }: { userId: number }) {
+export function DeleteUser({ userId }: { userId: number }) {
     const [deleteWindow, setDeleteWindow] = useState(false)
     const [accountDeleted, setAccountDeleted] = useState(false)
     const router = useRouter()
@@ -40,7 +40,7 @@ export function DeleteAccountDialog({ userId }: { userId: number }) {
                     <div className="flex justify-between items-center mb-2">
                         <DialogTitle className="text-lg font-medium">
                             {!accountDeleted
-                                ? "Are you sure you want to delete your account?"
+                                ? "Are you sure you want to delete this account?"
                                 : "Account Deleted"}
                         </DialogTitle>
                         <Button variant="ghost" size="sm" onClick={handleClose}>
@@ -56,17 +56,13 @@ export function DeleteAccountDialog({ userId }: { userId: number }) {
                             {state.message}
                         </div>
                     )}
-                    {!accountDeleted ? (
+                    {!accountDeleted && (
                         <div className="flex justify-between items-center">
                             <Button onClick={handleClose} variant="outline">Cancel</Button>
                             <form action={action}>
                                 <Input type='number' name='userId' defaultValue={userId} readOnly className="hidden" />
                                 <Button type='submit' size='lg' aria-disabled={pending} disabled={pending} variant="destructive">Delete Account</Button>
                             </form>
-                        </div>
-                    ) : (
-                        <div className="flex justify-center mt-4">
-                            <Button onClick={handleClose} variant="default">Close and Logout</Button>
                         </div>
                     )}
 

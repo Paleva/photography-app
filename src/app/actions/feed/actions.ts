@@ -173,6 +173,7 @@ export async function getUser(userId: number) {
                 username: users.username,
                 bio: users.bio,
                 profile_picture: users.profile_picture,
+                role: users.role,
             })
             .from(users)
             .where(eq(users.id, userId))
@@ -336,25 +337,16 @@ export async function getPaginatedPostsUploads(limit: number = 20, offset: numbe
     }
 }
 
-export async function getPaginatedPostsUser(limit: number = 20, offset: number = 0, category: string = '', userId: number = -1) {
+export async function getPaginatedPostsUser(limit: number = 20, offset: number = 0, userId: number = 0) {
     try {
-        let postIds: number[] = []
 
-        if (category) {
-            const [categoryResult] = await db
-                .select({ id: categories.id })
-                .from(categories)
-                .where(eq(categories.name, category))
-                .limit(1)
+        const postIds = await getPostsIdByUserId(limit, offset, userId)
 
-            postIds = await getPostsIdByCategoryId(categoryResult.id, limit, offset, userId)
-        } else {
-            postIds = await getPostsIdByUserId(limit, offset, userId)
-        }
+        const session = await verifySession()
 
         const posts = await Promise.all(
             postIds.map(async (id) => {
-                const postData = await getPost(userId, id)
+                const postData = await getPost(session.userId, id)
                 return {
                     id,
                     ...postData

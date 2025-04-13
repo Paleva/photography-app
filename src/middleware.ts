@@ -18,7 +18,6 @@ export default async function middleware(req: NextRequest) {
     const isUserRoute = userRoute.some(route => path.startsWith(route));
     const isAdminRoute = adminRoutes.some(route => path.startsWith(route));
     const session = await verifySession();
-    console.log("\nSESSION:\n" + JSON.stringify(session) + "\n");
 
     if (isAdminRoute && session.role?.toLowerCase() !== 'admin') {
         return NextResponse.redirect(new URL('/login', req.nextUrl))

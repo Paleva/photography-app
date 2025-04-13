@@ -4,6 +4,7 @@ import { verifySession } from '@/app/(public)/auth/session'
 import { getPost } from '@/app/actions/feed/actions'
 import { PostCard } from '@/components/feed/post'
 import { Suspense } from 'react'
+
 export default async function PostPage({
     params
 }: {
@@ -15,10 +16,12 @@ export default async function PostPage({
     const { post, user, liked, } = await getPost(session.userId, postId);
 
     return (
-        <PostCard
-            post={post}
-            user={user}
-            liked={liked}
-            userId={session.userId} />
+        <Suspense fallback={<Loading />}>
+            <PostCard
+                post={post}
+                user={user}
+                liked={liked}
+                userId={session.userId} />
+        </Suspense>
     )
 }

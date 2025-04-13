@@ -61,8 +61,7 @@ export default async function AdminDashboard({
     usersOverTime,
     topUsers,
     popularPosts,
-    commentDistribution,
-    engagementRatio
+    commentDistribution
 }: ChartData) {
 
     // Calculate totals for the stats cards

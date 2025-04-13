@@ -4,14 +4,11 @@ import { randomUUID } from 'crypto'
 import { eq } from 'drizzle-orm'
 import { writeFile } from 'fs/promises'
 import { uploadUserSchema, UploadUserFormState } from '@/app/api/upload/validation'
-import { ChangePasswordFormSchema, FormState } from './validation'
+import { ChangePasswordFormSchema, FormState, DeleteFormState, DeleteAccountSchema } from './validation'
 import path from 'path'
 import { getUser } from '../feed/actions'
 import { verifySession, deleteCookie } from '@/app/(public)/auth/session'
 import bcrypt from "bcrypt"
-
-
-
 
 export async function changePassword(state: FormState, formData: FormData): Promise<FormState> {
     const { userId } = await verifySession()
@@ -62,24 +59,46 @@ export async function changePassword(state: FormState, formData: FormData): Prom
     }
 }
 
-export async function deleteAccount() {
-    const { userId } = await verifySession()
+export async function deleteAccount(state: DeleteFormState, formData: FormData): Promise<DeleteFormState> {
+
+    const validatedFields = DeleteAccountSchema.safeParse({
+        userId: formData.get('userId'),
+    })
+    console.log('validatedFields', JSON.stringify(validatedFields))
+    if (!validatedFields.success) {
+        return {
+            error: "Invalid user ID",
+            success: false
+        }
+    }
+    const { userId: idToDelete } = validatedFields.data
+
+    const { userId, role } = await verifySession()
+
+    console.log('userId', userId)
+    console.log('idToDelete', idToDelete)
 
     if (!userId) {
-        return null
+        return {
+            error: "User not logged in",
+            success: false
+        }
     }
 
     try {
-        const [user] = await db.select().from(users).where(eq(users.id, userId))
-
-        await db.delete(posts).where(eq(posts.user_id, user.id)).returning()
-
-        await db.delete(comments).where(eq(comments.user_id, user.id)).returning()
-
-        await db.delete(likes).where(eq(likes.user_id, user.id)).returning()
-
-        await db.delete(users).where(eq(users.id, user.id)).returning()
-
+        if (idToDelete === userId) {
+            const [user] = await db.select().from(users).where(eq(users.id, userId))
+            await db.delete(posts).where(eq(posts.user_id, user.id)).returning()
+            await db.delete(comments).where(eq(comments.user_id, user.id)).returning()
+            await db.delete(likes).where(eq(likes.user_id, user.id)).returning()
+            await db.delete(users).where(eq(users.id, user.id)).returning()
+        } else if (role === 'admin') {
+            const [user] = await db.select().from(users).where(eq(users.id, idToDelete))
+            await db.delete(posts).where(eq(posts.user_id, user.id)).returning()
+            await db.delete(comments).where(eq(comments.user_id, user.id)).returning()
+            await db.delete(likes).where(eq(likes.user_id, user.id)).returning()
+            await db.delete(users).where(eq(users.id, user.id)).returning()
+        }
         return {
             message: "Successfully deleted account and everything associated with it",
             success: true
