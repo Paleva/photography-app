@@ -88,16 +88,16 @@ export async function deleteAccount(state: DeleteFormState, formData: FormData):
     try {
         if (idToDelete === userId) {
             const [user] = await db.select().from(users).where(eq(users.id, userId))
-            await db.delete(posts).where(eq(posts.user_id, user.id)).returning()
-            await db.delete(comments).where(eq(comments.user_id, user.id)).returning()
-            await db.delete(likes).where(eq(likes.user_id, user.id)).returning()
-            await db.delete(users).where(eq(users.id, user.id)).returning()
+            await db.delete(posts).where(eq(posts.user_id, user.id))
+            await db.delete(comments).where(eq(comments.user_id, user.id))
+            await db.delete(likes).where(eq(likes.user_id, user.id))
+            await db.delete(users).where(eq(users.id, user.id))
         } else if (role === 'admin') {
             const [user] = await db.select().from(users).where(eq(users.id, idToDelete))
-            await db.delete(posts).where(eq(posts.user_id, user.id)).returning()
-            await db.delete(comments).where(eq(comments.user_id, user.id)).returning()
-            await db.delete(likes).where(eq(likes.user_id, user.id)).returning()
-            await db.delete(users).where(eq(users.id, user.id)).returning()
+            await db.delete(posts).where(eq(posts.user_id, user.id))
+            await db.delete(comments).where(eq(comments.user_id, user.id))
+            await db.delete(likes).where(eq(likes.user_id, user.id))
+            await db.delete(users).where(eq(users.id, user.id))
         }
         return {
             message: "Successfully deleted account and everything associated with it",

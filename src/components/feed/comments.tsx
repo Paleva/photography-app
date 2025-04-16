@@ -50,7 +50,7 @@ export function Comments({ postId, userId }: { postId: number, userId: number })
                 {isLoading ? (
                     <p className="text-sm text-muted-foreground">Loading comments...</p>
                 ) : comments.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No comments yet. Be the first!</p>
+                    <p className="text-sm text-muted-foreground m-4">No comments yet. Be the first!</p>
                 ) : (
                     <div className="space-y-4">
                         {comments.map((comment) => (

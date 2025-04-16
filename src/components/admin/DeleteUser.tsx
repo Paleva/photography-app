@@ -1,5 +1,5 @@
 "use client"
-import { deleteAccount, logoutAfterDeletion } from "@/app/actions/user/actions"
+import { deleteAccount } from "@/app/actions/user/actions"
 import { useActionState, useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent } from "../ui/dialog"
@@ -24,8 +24,6 @@ export function DeleteUser({ userId }: { userId: number }) {
     // Function to handle dialog close and redirect
     const handleClose = async () => {
         if (accountDeleted) {
-            // Logout and redirect to login page
-            await logoutAfterDeletion()
             router.push('/')
         } else {
             setDeleteWindow(false)
