@@ -19,7 +19,7 @@
 
 # production
 /build
-
+uploads.tar
 # misc
 .DS_Store
 *.pem
