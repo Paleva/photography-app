@@ -125,7 +125,8 @@
       become: true
       ufw:
         rule: allow
-        name: "ssh"
+        port: ssh
+        proto: tcp
         state: enabled
 
     - name: Untar uploads
