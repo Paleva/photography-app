@@ -1,4 +1,3 @@
-'use server'
 
 import AdminDashboard, { ChartData } from "@/components/admin/AdminDashboard";
 import { Button } from "@/components/ui/button";

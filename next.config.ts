@@ -20,6 +20,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['193.219.42.55:1053', '193.219.42.55'],
+    },
+  },
+
 };
 
 export default nextConfig;
