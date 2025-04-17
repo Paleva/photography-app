@@ -1,0 +1,206 @@
+---
+- name: Configure webserver with nginx, nextjs and postgresql
+  hosts: localhost
+
+  tasks:
+    - name: Update apt cache
+      become: true
+      apt:
+        update_cache: yes
+
+    - name: Install nginx, postgresql
+      become: true
+      apt:
+        name:
+          - nginx
+          - postgresql
+          - python3-psycopg2
+        state: present
+
+    - name: Install bun
+      shell: "curl -fsSL https://bun.sh/install | bash"
+      args:
+        executable: /bin/bash
+
+    - name: Start and enable nginx
+      become: true
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Start and enable PostgreSQL
+      become: true
+      service:
+        name: postgresql
+        state: started
+        enabled: true
+
+    - name: Generate password
+      command: "openssl rand -hex 12"
+      register: db_password
+
+    - name: Change postgres login method
+      become: true
+      lineinfile:
+        dest: /etc/postgresql/16/main/pg_hba.conf
+        regexp: '^local\s+all\s+postgres\s+peer'
+        line: "local   all             postgres                                trust"
+
+    - name: Restart PostgreSQL
+      become: true
+      service:
+        name: postgresql
+        state: restarted
+
+    - name: Change postgres password
+      postgresql_user:
+        name: postgres
+        password: "{{ db_password.stdout }}"
+
+    - name: Change postgres login method
+      become: true
+      lineinfile:
+        dest: /etc/postgresql/16/main/pg_hba.conf
+        regexp: '^local\s+all\s+postgres\s+peer'
+        line: "local   all             postgres                                scram-sha-256"
+
+    - name: Restart PostgreSQL
+      become: true
+      service:
+        name: postgresql
+        state: restarted
+
+    - name: Create PostgreSQL database
+      postgresql_db:
+        name: webapp
+        state: present
+        login_user: postgres
+        login_password: "{{ db_password.stdout }}"
+
+    - name: Read SQL schema file
+      slurp:
+        src: ./schema.sql
+      register: sql_schema
+
+    - name: Run table creation
+      postgresql_query:
+        db: webapp
+        query: "{{ sql_schema.content | b64decode }}"
+        login_user: postgres
+        login_password: "{{ db_password.stdout }}"
+
+    - name: Move reverse proxy configuration
+      become: true
+      copy:
+        src: ./webapp
+        dest: /etc/nginx/sites-available/webapp
+
+    - name: Create symbolic link
+      become: true
+      file:
+        src: /etc/nginx/sites-available/webapp
+        dest: /etc/nginx/sites-enabled/webapp
+        state: link
+
+    - name: Restart nginx
+      become: true
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Enable Firewall
+      become: true
+      ufw:
+        state: enabled
+
+    - name: Firewall rules
+      become: true
+      ufw:
+        rule: allow
+        name: "Nginx Full"
+        state: enabled
+
+    - name: Firewall rules
+      become: true
+      ufw:
+        rule: allow
+        name: "ssh"
+        state: enabled
+
+    - name: Untar uploads
+      unarchive:
+        src: ./uploads.tar
+        dest: ./photography-app
+
+    - name: Delete archive
+      file:
+        path: ~/uploads.tar
+        state: absent
+
+    - name: Install packages
+      shell: /home/arvo0419/.bun/bin/bun install
+      args:
+        chdir: /home/arvo0419/photography-app
+        executable: /bin/bash
+
+    - name: Create session secret
+      shell: openssl rand -hex 32
+      register: session_secret
+
+    - name: Create .env file
+      copy:
+        dest: /home/arvo0419/photography-app/.env
+        content: |
+          DB_HOST="localhost"
+          DB_PORT="5432"
+          DB_USER="postgres"
+          DB_PASSWORD="{{ db_password.stdout }}"
+          DATABASE_URL="postgresql://postgres:{{ db_password.stdout }}@localhost:5432/webapp"
+          SESSION_SECRET={{ session_secret.stdout }}
+
+    - name: Seed the database
+      shell: /home/arvo0419/.bun/bin/bun src/db/seed.ts
+      args:
+        chdir: /home/arvo0419/photography-app
+        executable: /bin/bash
+
+    - name: Build NextJS app
+      shell: /home/arvo0419/.bun/bin/bun run build
+      args:
+        chdir: /home/arvo0419/photography-app
+        executable: /bin/bash
+
+    - name: Create NextJS service file
+      become: true
+      copy:
+        dest: /etc/systemd/system/nextjs.service
+        content: |
+          [Unit]
+          Description=NextJS Application
+          After=network.target
+
+          [Service]
+          Type=simple
+          User=arvo0419
+          Group=arvo0419
+          WorkingDirectory=/home/arvo0419/photography-app
+          ExecStart=/home/arvo0419/.bun/bin/bun start
+          Restart=on-failure
+          Environment=NODE_ENV=production
+          Environment=PORT=3000
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd
+      become: true
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start NextJS service
+      become: true
+      systemd:
+        name: nextjs
+        enabled: yes
+        state: started

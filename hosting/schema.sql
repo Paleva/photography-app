@@ -1,5 +1,12 @@
+DROP TABLE IF EXISTS posts CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS likes CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
+
 -- USERS table: Stores user accounts (Photographers, Viewers, Admins)
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -11,12 +18,12 @@ CREATE TABLE users (
 );
 
 -- CATEGORIES table: Stores different photo categories
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 -- PHOTOS table: Stores uploaded photos
-CREATE TABLE posts (
+CREATE TABLE IF NOT EXISTS posts (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     filename VARCHAR(255) NOT NULL,
@@ -31,7 +38,7 @@ CREATE TABLE posts (
 );
 
 -- COMMENTS table: Stores user comments on photos
-CREATE TABLE comments (
+CREATE TABLE IF NOT EXISTS comments (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     post_id INT REFERENCES posts(id) ON DELETE CASCADE,
@@ -39,14 +46,14 @@ CREATE TABLE comments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE likes(
+CREATE TABLE IF NOT EXISTS likes(
     post_id INT REFERENCES posts(id) ON DELETE CASCADE,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY( post_id, user_id)
 );
 
-CREATE TABLE roles(
+CREATE TABLE IF NOT EXISTS roles(
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
