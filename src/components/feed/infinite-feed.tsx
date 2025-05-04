@@ -57,9 +57,6 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
                 setIsLoading(true)
                 try {
                     const result = await getPosts(POSTS_PER_PAGE, 0, category)
-                    console.log('result', result)
-                    console.log('result.posts', result.posts)
-                    console.log('category', category)
                     if (result.posts.length === 0 || !result.hasMore) {
                         setHasMore(false)
                         setIsLoading(false)
@@ -134,8 +131,6 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
             </div>
         )
     }
-
-    console.log(posts[0].userId)
 
     return (
         <div ref={gridRef}>
