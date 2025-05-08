@@ -22,7 +22,7 @@ export function LikeButton({ postId, userId, initialLiked, initialLikes }: LikeB
 
         setIsLoading(true)
         try {
-            const liked = await toggleLike(postId, userId)
+            const liked = await toggleLike(postId)
 
             if (liked !== null) {
                 setIsLiked(liked)

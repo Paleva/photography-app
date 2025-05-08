@@ -2,7 +2,7 @@
 import Loading from './loading'
 import { verifySession } from '@/app/(public)/auth/session'
 import { getPost } from '@/app/actions/feed/actions'
-import { DeletePostButton } from '@/components/feed/DeletePost'
+// import { DeletePostButton } from '@/components/feed/DeletePost'
 import { PostCard } from '@/components/feed/post'
 import { Suspense } from 'react'
 
@@ -19,7 +19,7 @@ export default async function PostPage({
     if (post.id === -1) {
         return (
             <div className="w-full h-32 flex items-center justify-center bg-muted">
-                <p className="text-red-500 text-lg">Post doesn't exist</p>
+                <p className="text-red-500 text-lg">Post does not exist</p>
             </div>
         )
     }
