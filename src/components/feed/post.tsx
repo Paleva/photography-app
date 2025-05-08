@@ -83,41 +83,44 @@ export function PostCard({
                                 priority
                             />
 
-                            {/* Top gradient overlay - appears on hover */}
-                            <div className={`absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex items-center text-white ${topOverlayClasses}`}>
-                                <div className="flex items-center gap-3">
-                                    <Avatar>
-                                        {user.profile_picture ?
-                                            <AvatarImage src={user.profile_picture} alt={user.username} />
-                                            : null
-                                        }
-                                        <AvatarFallback className="bg-primary/20 text-primary">{user.username.charAt(0)}</AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <p className="font-medium">{user.username}</p>
-                                        <Link href="/[username]" as={`/${user.username}`} className={linkInteractionClass}>
-                                            <p className="text-sm text-white/70">@{user.username}</p>
-                                        </Link>
+
+                            {(!isTouchDevice || isOverlayVisible) && (
+                                <div className={`absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex items-center text-white ${topOverlayClasses}`}>
+                                    <div className="flex items-center gap-3">
+                                        <Avatar>
+                                            {user.profile_picture ?
+                                                <AvatarImage src={user.profile_picture} alt={user.username} />
+                                                : null
+                                            }
+                                            <AvatarFallback className="bg-primary/20 text-primary">{user.username.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <p className="font-medium">{user.username}</p>
+                                            <Link href="/[username]" as={`/${user.username}`} className={linkInteractionClass}>
+                                                <p className="text-sm text-white/70">@{user.username}</p>
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
 
-                            {/* Bottom gradient overlay - appears on hover */}
-                            <div className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 ${bottomOverlayClasses}  ${post.isVertical ? 'pb-3 pr-2 pl-2' : 'pl-2 pr-2'} text-white`}>
-                                <div className="mb-3">
-                                    <h3 className="text-xl font-bold mb-1">{post.title}</h3>
-                                    <p className="text-sm text-white/80 line-clamp-2">
-                                        {post.description}
-                                    </p>
+                            {(!isTouchDevice || isOverlayVisible) && (
+                                <div className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 ${bottomOverlayClasses}  ${post.isVertical ? 'pb-3 pr-2 pl-2' : 'pl-2 pr-2'} text-white`}>
+                                    <div className="mb-3">
+                                        <h3 className="text-xl font-bold mb-1">{post.title}</h3>
+                                        <p className="text-sm text-white/80 line-clamp-2">
+                                            {post.description}
+                                        </p>
+                                    </div>
+                                    <div className={`border-t ${post.isVertical ? 'pb-2' : 'pb-0'}}`}>
+                                        <LikeButton
+                                            postId={post.id}
+                                            userId={userId}
+                                            initialLiked={liked}
+                                            initialLikes={post.likes || 0} />
+                                    </div>
                                 </div>
-                                <div className={`border-t ${post.isVertical ? 'pb-2' : 'pb-0'}}`}>
-                                    <LikeButton
-                                        postId={post.id}
-                                        userId={userId}
-                                        initialLiked={liked}
-                                        initialLikes={post.likes || 0} />
-                                </div>
-                            </div>
+                            )}
                         </div>
                     </Card>
                     {userId === user.id ?

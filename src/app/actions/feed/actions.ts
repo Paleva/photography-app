@@ -137,7 +137,7 @@ export async function getPost(userId: number, postId: number) {
             .limit(1);
 
         const { post, user } = results[0];
-        const liked = await getLiked(userId, post.id)
+        const liked = await getLiked(post.id)
 
         return { post, user, liked, userId }
     }
