@@ -1,7 +1,7 @@
 import { UserCard } from "@/components/profile/UserCard"
 import { db, users } from "@/db/schema"
 import { eq } from "drizzle-orm"
-import { getPaginatedPostsUser } from "../actions/feed/actions"
+import { getFeedPosts } from "../actions/feed/actions"
 import { InfiniteFeedUser } from "@/components/feed/infinite-feed-user"
 import { verifySession } from "../(public)/auth/session"
 import { DeleteUser } from "@/components/admin/DeleteUser"
@@ -29,7 +29,7 @@ export default async function Page({
     }
 
     const userId = result.id
-    const initialPosts = await getPaginatedPostsUser(20, 0, userId)
+    const initialPosts = await getFeedPosts(20, 0, { filterByUploaderId: userId })
 
     const session = await verifySession()
     const isAdmin = session.role === 'admin'
@@ -49,7 +49,7 @@ export default async function Page({
             <div className='p-2'>
                 <InfiniteFeedUser
                     initialPosts={initialPosts.posts}
-                    getPosts={getPaginatedPostsUser}
+                    getPosts={getFeedPosts}
                     userId={userId}
                 />
             </div>

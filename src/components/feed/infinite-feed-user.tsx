@@ -11,8 +11,12 @@ const POSTS_PER_PAGE = 20
 interface InfiniteFeedProps {
     initialPosts: any[]
     category?: string
-    userId?: number
-    getPosts: (limit?: number, offset?: number, userId?: number) => Promise<{
+    userId: number
+    getPosts: (limit?: number, offset?: number, options?: {
+        categoryName?: string
+        filterByUploaderId?: number
+        filterByLikedSessionUser?: boolean
+    }) => Promise<{
         posts: any[]
         hasMore: boolean
     }>
@@ -53,7 +57,7 @@ export function InfiniteFeedUser({ initialPosts, userId, getPosts }: InfiniteFee
 
         setIsLoading(true)
         try {
-            const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE, userId)
+            const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE, { filterByUploaderId: userId })
 
 
             // if (!result.posts.length || !result.hasMore) {

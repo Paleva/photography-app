@@ -102,10 +102,10 @@ export function EditProfileForm({
 
     return (
         <>
-            <div className="flex justify-between items-center">
+            {/* <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold ">Edit Profile</h2>
                 <Button onClick={() => setEdit(true)} variant="outline">Edit Profile</Button>
-            </div>
+            </div> */}
             <form action={enhancedAction} >
                 <div className="space-y-3 pb-4">
                     <Label htmlFor="username" className="block text-sm font-medium">

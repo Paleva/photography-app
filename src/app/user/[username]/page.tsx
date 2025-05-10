@@ -21,7 +21,6 @@ export default async function UserPage() {
     return (
         <div className="container max-w-4xl mx-auto py-6 space-y-6">
             <Suspense fallback={<Loading />}>
-                {/* Profile Editor - This would typically be conditionally shown */}
                 <ProfileEditor
                     username={user.username}
                     bio={user.bio ?? ""}

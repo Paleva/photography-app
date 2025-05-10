@@ -1,9 +1,9 @@
-import { getCategories, getPaginatedPosts } from '../actions/feed/actions'
+import { getCategories, getFeedPosts } from '../actions/feed/actions'
 import FeedContainer from '@/components/feed/FeedContainer'
 
 export default async function Page() {
 
-    const initialData = await getPaginatedPosts()
+    const initialData = await getFeedPosts()
     const categories = await getCategories()
     const categoriesNames = categories.map((category: { name: string }) => category.name)
 
@@ -16,7 +16,7 @@ export default async function Page() {
         <FeedContainer
             initialPosts={initialData.posts}
             categories={categoriesNames}
-            getPosts={getPaginatedPosts}
+            getPosts={getFeedPosts}
         />
     )
 }

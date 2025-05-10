@@ -11,14 +11,17 @@ const POSTS_PER_PAGE = 20
 interface InfiniteFeedProps {
     initialPosts: any[]
     category?: string
-    getPosts: (limit?: number, offset?: number, category?: string, userId?: number) => Promise<{
+    getPosts: (limit?: number, offset?: number, options?: {
+        categoryName?: string,
+        filterByUploaderId?: number,
+        filterByLikedSessionUser?: boolean,
+    }) => Promise<{
         posts: any[]
         hasMore: boolean
     }>
 }
 
 export function InfiniteFeed({ initialPosts, category = '', getPosts }: InfiniteFeedProps) {
-
     const [posts, setPosts] = useState<PostData[]>(
         initialPosts.map((post) => ({
             ...post,
@@ -29,6 +32,7 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
     const [isLoading, setIsLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
 
+    // TODO: Delete useRef for the Div
     const gridRef = useRef<HTMLDivElement>(null)
     const previousCategory = useRef<string>(category)
 
@@ -56,7 +60,7 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
             const loadInitialPostsForCategory = async () => {
                 setIsLoading(true)
                 try {
-                    const result = await getPosts(POSTS_PER_PAGE, 0, category)
+                    const result = await getPosts(POSTS_PER_PAGE, 0, category ? { categoryName: category } : {})
                     if (result.posts.length === 0 || !result.hasMore) {
                         setHasMore(false)
                         setIsLoading(false)
@@ -85,7 +89,7 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
 
         setIsLoading(true)
         try {
-            const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE, category)
+            const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE, category ? { categoryName: category } : {})
 
             if (!result.posts.length || !result.hasMore) {
                 setHasMore(false)

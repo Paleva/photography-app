@@ -1,4 +1,4 @@
-import { getCategories, getPaginatedPostsUploads } from '@/app/actions/feed/actions'
+import { getCategories, getFeedPostsBySessionUser } from '@/app/actions/feed/actions'
 import { verifySession } from '@/app/(public)/auth/session'
 import FeedContainer from '@/components/feed/FeedContainer'
 
@@ -9,7 +9,7 @@ export default async function Page() {
         return <div>Not logged in</div>
     }
 
-    const initialData = await getPaginatedPostsUploads()
+    const initialData = await getFeedPostsBySessionUser(20, 0)
     const categories = await getCategories()
     const categoriesNames = categories.map((category: { name: string }) => category.name)
 
@@ -22,7 +22,7 @@ export default async function Page() {
         <FeedContainer
             initialPosts={initialData.posts}
             categories={categoriesNames}
-            getPosts={getPaginatedPostsUploads}
+            getPosts={getFeedPostsBySessionUser}
         />
     )
 }
