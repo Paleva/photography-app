@@ -134,11 +134,6 @@
         src: ./uploads.tar
         dest: ./photography-app
 
-    - name: Delete archive
-      file:
-        path: ~/uploads.tar
-        state: absent
-
     - name: Install packages
       shell: /home/arvo0419/.bun/bin/bun install
       args:
@@ -205,3 +200,9 @@
         name: nextjs
         enabled: yes
         state: started
+
+    - name: Restart NextJS service
+      become: true
+      systemd:
+        name: nextjs
+        state: restarted
