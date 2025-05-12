@@ -77,7 +77,7 @@ export function ClientPostCard({
                     height={post.isVertical ? 700 : 500}
                     className="w-full h-full object-cover rounded-lg"
                     alt={post.title || "Post image"}
-                    priority
+                    priority={true}
                 />
 
                 {/* Top gradient overlay */}
