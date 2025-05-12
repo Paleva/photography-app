@@ -2,8 +2,9 @@
 import Loading from './loading'
 import { verifySession } from '@/app/(public)/auth/session'
 import { getPost } from '@/app/actions/feed/actions'
-// import { DeletePostButton } from '@/components/feed/DeletePost'
+import { DeletePostButton } from '@/components/feed/DeletePost'
 import { PostCard } from '@/components/feed/post'
+import { Delete } from 'lucide-react'
 import { Suspense } from 'react'
 
 export default async function PostPage({
@@ -23,15 +24,20 @@ export default async function PostPage({
             </div>
         )
     }
-
+    console.log(session)
     return (
         <Suspense fallback={<Loading />}>
-            <div className='flex flex-col items-center justify-center'>
-                <PostCard
-                    post={post}
-                    user={user}
-                    liked={liked}
-                    userId={session.userId} />
+            <div className="">
+                <div className='flex flex-col items-center justify-center'>
+                    <PostCard
+                        post={post}
+                        user={user}
+                        liked={liked}
+                        userId={session.userId} />
+                </div>
+                {session.role === 'admin' &&
+                    <DeletePostButton postId={post.id} />
+                }
             </div>
         </Suspense>
     )
