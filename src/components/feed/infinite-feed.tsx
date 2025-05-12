@@ -30,15 +30,13 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
     )
     const [page, setPage] = useState(1) // Start at 1 since we already have the first page
     const [isLoading, setIsLoading] = useState(false)
-    const [hasMore, setHasMore] = useState(true)
+    const [hasMore, setHasMore] = useState(initialPosts.length >= POSTS_PER_PAGE)
 
-    // TODO: Delete useRef for the Div
-    const gridRef = useRef<HTMLDivElement>(null)
     const previousCategory = useRef<string>(category)
 
     const { ref, inView } = useInView({
         threshold: 0,
-        rootMargin: '200px',
+        rootMargin: '400px',
     })
 
     // Distribute only the new posts evenly without affecting existing ones
@@ -54,8 +52,10 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
 
     useEffect(() => {
         if (previousCategory.current !== category) {
+            setPosts([])
             setPage(1)
             setHasMore(true)
+            previousCategory.current = category
 
             const loadInitialPostsForCategory = async () => {
                 setIsLoading(true)
@@ -70,8 +70,8 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
                         ...post,
                         instanceId: post.post.id
                     }));
-                    const newPosts = distributeNewPostsEvenly(postsWithUniqueIds)
-                    setPosts(newPosts)
+                    setPosts(distributeNewPostsEvenly(postsWithUniqueIds))
+                    setHasMore(result.hasMore)
                 } catch (error) {
                     console.error('Error loading initial posts:', error)
                 }
@@ -80,9 +80,8 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
                 }
             }
             loadInitialPostsForCategory()
-            previousCategory.current = category
         }
-    }, [category])
+    }, [category, getPosts])
 
     const loadMorePosts = async () => {
         if (isLoading || !hasMore) return
@@ -90,10 +89,7 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
         setIsLoading(true)
         try {
             const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE, category ? { categoryName: category } : {})
-
-            if (!result.posts.length || !result.hasMore) {
-                setHasMore(false)
-            } else {
+            if (result.posts && result.posts.length > 0) {
                 // Add unique instanceId to each new post
                 const postsWithUniqueIds = result.posts.map(post => ({
                     ...post,
@@ -105,8 +101,10 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
                 setPosts((prev) => [...prev, ...balancedNewPosts]);
                 setPage((prev) => prev + 1)
             }
+            setHasMore(result.hasMore)
         } catch (error) {
             console.error('Error loading more posts:', error)
+            setHasMore(false)
         } finally {
             setIsLoading(false)
         }
@@ -137,7 +135,7 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
     }
 
     return (
-        <div ref={gridRef}>
+        <div>
             <MasonryGrid>
                 {posts.map((postData) => (
                     // Use the instanceId as the key instead of just postData.id

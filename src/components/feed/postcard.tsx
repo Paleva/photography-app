@@ -102,7 +102,7 @@ export function ClientPostCard({
                     <div className="mb-1 sm:mb-3 flex items-center justify-between" onClick={e => isTouchDevice && e.stopPropagation()}>
                         <div className="flex-col items-center gap-1 sm:gap-2 max-w-[80%]">
                             <Link href={`/post/${post.id}`} className={linkInteractionClass}>
-                                <h3 className=" font-bold text-xl mb-1 line-clamp-1">{post.title}</h3>
+                                <h3 className="font-bold text-xl mb-1 line-clamp-1">{post.title}</h3>
                             </Link>
                             <p className="text-xs sm:text-sm text-white/80 line-clamp-1 sm:line-clamp-2">
                                 {post.description}

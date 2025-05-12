@@ -3,9 +3,9 @@ import { verifySession } from '@/app/(public)/auth/session'
 import FeedContainer from '@/components/feed/FeedContainer'
 
 export default async function Page() {
-    const { userId } = await verifySession()
+    const session = await verifySession()
 
-    if (!userId) {
+    if (!session.isAuth) {
         return <div>Not logged in</div>
     }
 

@@ -33,8 +33,8 @@ export async function addComment(postId: number, userId: number, content: string
     try {
         if (!content.trim() || userId === -1) return null;
 
-        const sesion = await verifySession();
-        if (!sesion.isAuth || sesion.userId !== userId) {
+        const session = await verifySession();
+        if (!session.isAuth || session.userId !== userId) {
             return null;
         }
 
@@ -42,7 +42,7 @@ export async function addComment(postId: number, userId: number, content: string
         const [result] = await db.insert(comments)
             .values({
                 post_id: postId,
-                user_id: userId,
+                user_id: session.userId,
                 comment_text: content.trim(),
             })
             .returning();
