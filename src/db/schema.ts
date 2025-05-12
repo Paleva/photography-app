@@ -15,7 +15,7 @@ export const users = pgTable("users", {
     role: varchar({ length: 50 }).notNull(),
     profile_picture: text().default('/default-profile-picture.png').notNull(),
     bio: text(),
-    created_at: timestamp().defaultNow(),
+    created_at: timestamp().defaultNow().notNull(),
 });
 
 export const categories = pgTable("categories", {
