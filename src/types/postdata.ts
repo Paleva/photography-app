@@ -17,4 +17,5 @@ export type PostData = {
     }
     liked: boolean
     userId: number
+    role?: string
 }

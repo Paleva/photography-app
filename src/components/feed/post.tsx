@@ -16,7 +16,8 @@ export function PostCard({
     post,
     user,
     liked,
-    userId
+    userId,
+    role
 }: PostData) {
 
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
@@ -123,7 +124,7 @@ export function PostCard({
                             )}
                         </div>
                     </Card>
-                    {userId === user.id ?
+                    {userId === user.id || role === 'admin' ?
                         <DeletePostButton postId={post.id} />
                         : null}
                 </div>

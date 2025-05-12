@@ -24,7 +24,7 @@ export default async function PostPage({
             </div>
         )
     }
-    console.log(session)
+
     return (
         <Suspense fallback={<Loading />}>
             <div className="">
@@ -33,11 +33,12 @@ export default async function PostPage({
                         post={post}
                         user={user}
                         liked={liked}
-                        userId={session.userId} />
+                        userId={session.userId}
+                        role={session.role} />
                 </div>
-                {session.role === 'admin' &&
+                {/* {session.role === 'admin' &&
                     <DeletePostButton postId={post.id} />
-                }
+                } */}
             </div>
         </Suspense>
     )
