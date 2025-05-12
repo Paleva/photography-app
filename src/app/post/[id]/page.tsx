@@ -2,9 +2,7 @@
 import Loading from './loading'
 import { verifySession } from '@/app/(public)/auth/session'
 import { getPost } from '@/app/actions/feed/actions'
-import { DeletePostButton } from '@/components/feed/DeletePost'
 import { PostCard } from '@/components/feed/post'
-import { Delete } from 'lucide-react'
 import { Suspense } from 'react'
 
 export default async function PostPage({
