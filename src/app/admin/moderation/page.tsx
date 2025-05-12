@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { db, users } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
