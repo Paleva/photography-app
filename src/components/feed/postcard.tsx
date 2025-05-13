@@ -45,24 +45,19 @@ export function ClientPostCard({
     if (post.id === -1) {
         return (
             <Card className="overflow-hidden relative">
-                <div className="w-full flex items-center justify-center bg-muted">
+                <div className="w-1/2 flex items-center justify-center bg-muted">
                     <p className="text-red-500 text-lg">Failed to fetch post</p>
                 </div>
             </Card>
         )
     }
 
-    // Determine overlay visibility based on device type and state
-    const topOverlayClasses = isTouchDevice
-        ? isOverlayVisible ? "opacity-100" : "opacity-0"
-        : "opacity-100 sm:opacity-0 sm:group-hover:opacity-100";
+    const overlayVisibilityClass = isTouchDevice
+        ? isOverlayVisible
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        : "opacity-100 sm:opacity-0 sm:pointer-events-none sm:group-hover:opacity-100 sm:group-hover:pointer-events-auto"
 
-    const bottomOverlayClasses = isTouchDevice
-        ? isOverlayVisible ? "opacity-100" : "opacity-0"
-        : "opacity-100 sm:opacity-0 sm:group-hover:opacity-100";
-
-    // Determine if links should be interactive
-    const linkInteractionClass = isTouchDevice && !isOverlayVisible ? "pointer-events-none" : "pointer-events-auto";
 
     return (
         <Card className="overflow-hidden relative group rounded-lg">
@@ -81,7 +76,7 @@ export function ClientPostCard({
                 />
 
                 {/* Top gradient overlay */}
-                <div className={`absolute inset-x-0 top-0 h-16 sm:h-20 md:h-24 bg-gradient-to-b from-black/80 to-transparent ${topOverlayClasses} transition-opacity duration-300 p-2 sm:p-4 flex items-center text-white`}>
+                <div className={`absolute inset-x-0 top-0 h-16 sm:h-20 md:h-24 bg-gradient-to-b from-black/80 to-transparent ${overlayVisibilityClass} transition-opacity duration-300 p-2 sm:p-4 flex items-center text-white`}>
                     <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
                             {user.profile_picture ? (
@@ -91,7 +86,7 @@ export function ClientPostCard({
                         </Avatar>
                         <div>
                             <p className="font-medium text-sm sm:text-base">{user.username}</p>
-                            <Link href={`/${user.username}`} className={linkInteractionClass}>
+                            <Link href={`/${user.username}`}>
                                 <p className="text-xs sm:text-sm text-white/70">@{user.username}</p>
                             </Link>
                         </div>
@@ -99,10 +94,10 @@ export function ClientPostCard({
                 </div>
 
                 {/* Bottom gradient overlay */}
-                <div className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent ${bottomOverlayClasses} transition-opacity duration-300 ${post.isVertical ? 'pb-3 pr-2 pl-2' : 'pl-2 pr-2'}  text-white`}>
+                <div className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent ${overlayVisibilityClass} transition-opacity duration-300 ${post.isVertical ? 'pb-3 pr-2 pl-2' : 'pl-2 pr-2'}  text-white`}>
                     <div className="mb-1 sm:mb-3 flex items-center justify-between" onClick={e => isTouchDevice && e.stopPropagation()}>
                         <div className="flex-col items-center gap-1 sm:gap-2 max-w-[80%]">
-                            <Link href={`/post/${post.id}`} className={linkInteractionClass}>
+                            <Link href={`/post/${post.id}`} >
                                 <h3 className="font-bold text-xl mb-1 line-clamp-1">{post.title}</h3>
                             </Link>
                             <p className="text-xs sm:text-sm text-white/80 line-clamp-1 sm:line-clamp-2">
@@ -122,6 +117,7 @@ export function ClientPostCard({
                         />
                     </div>
                 </div>
+
             </div>
         </Card>
     )

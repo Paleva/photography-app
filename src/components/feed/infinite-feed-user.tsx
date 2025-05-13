@@ -38,7 +38,7 @@ export function InfiniteFeedUser({ initialPosts, userId, getPosts }: InfiniteFee
 
     const { ref, inView } = useInView({
         threshold: 0,
-        rootMargin: '200px',
+        rootMargin: '400px',
     })
 
     // Distribute only the new posts evenly without affecting existing ones

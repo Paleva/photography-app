@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { MasonryGrid } from '@/components/layouts/masonry-grid'
 import { ClientPostCard } from './postcard'
@@ -31,8 +31,8 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
     const [page, setPage] = useState(1) // Start at 1 since we already have the first page
     const [isLoading, setIsLoading] = useState(false)
     const [hasMore, setHasMore] = useState(initialPosts.length >= POSTS_PER_PAGE)
+    const [previousCategory, setPreviousCategory] = useState<string>(category)
 
-    const previousCategory = useRef<string>(category)
 
     const { ref, inView } = useInView({
         threshold: 0,
@@ -51,11 +51,11 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
     };
 
     useEffect(() => {
-        if (previousCategory.current !== category) {
+        if (previousCategory !== category) {
             setPosts([])
             setPage(1)
             setHasMore(true)
-            previousCategory.current = category
+            setPreviousCategory(category)
 
             const loadInitialPostsForCategory = async () => {
                 setIsLoading(true)
@@ -70,7 +70,7 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
                         ...post,
                         instanceId: post.post.id
                     }));
-                    setPosts(distributeNewPostsEvenly(postsWithUniqueIds))
+                    setPosts(postsWithUniqueIds)
                     setHasMore(result.hasMore)
                 } catch (error) {
                     console.error('Error loading initial posts:', error)

@@ -616,12 +616,6 @@ async function seed() {
 
     await db.insert(likes).values(likeData);
 
-    // // Update the likes count for each post
-    // for (const [postId, likeCount] of postLikesCount.entries()) {
-    //     await db.update(posts)
-    //         .set({ likes: likeCount })
-    //         .where({ id: postId });
-    // }
 
     // Insert Comments (optional)
     const commentData = [];
