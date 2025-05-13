@@ -25,7 +25,6 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
     const [posts, setPosts] = useState<PostData[]>(
         initialPosts.map((post) => ({
             ...post,
-            instanceId: post.post.id
         })) || []
     )
     const [page, setPage] = useState(1) // Start at 1 since we already have the first page
@@ -39,17 +38,7 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
         rootMargin: '400px',
     })
 
-    // Distribute only the new posts evenly without affecting existing ones
-    const distributeNewPostsEvenly = (newPosts: any[]) => {
-        // Sort only the new posts by vertical/horizontal orientation
-        return newPosts.sort((a, b) => {
-            // Put vertical posts and horizontal posts in alternating order
-            if (a.isVertical && !b.isVertical) return 1;
-            if (!a.isVertical && b.isVertical) return -1;
-            return 0;
-        });
-    };
-
+    // On category change
     useEffect(() => {
         if (previousCategory !== category) {
             setPosts([])
@@ -65,12 +54,10 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
                         setHasMore(false)
                         setIsLoading(false)
                     }
-
-                    const postsWithUniqueIds = result.posts.map(post => ({
+                    const posts = result.posts.map(post => ({
                         ...post,
-                        instanceId: post.post.id
                     }));
-                    setPosts(postsWithUniqueIds)
+                    setPosts(posts)
                     setHasMore(result.hasMore)
                 } catch (error) {
                     console.error('Error loading initial posts:', error)
@@ -90,15 +77,10 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
         try {
             const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE, category ? { categoryName: category } : {})
             if (result.posts && result.posts.length > 0) {
-                // Add unique instanceId to each new post
-                const postsWithUniqueIds = result.posts.map(post => ({
+                const posts = result.posts.map(post => ({
                     ...post,
-                    instanceId: post.post.id
                 }));
-
-                // Only balance the new posts, then append them to existing posts
-                const balancedNewPosts = distributeNewPostsEvenly(postsWithUniqueIds);
-                setPosts((prev) => [...prev, ...balancedNewPosts]);
+                setPosts((prev) => [...prev, ...posts]);
                 setPage((prev) => prev + 1)
             }
             setHasMore(result.hasMore)
