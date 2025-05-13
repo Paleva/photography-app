@@ -60,7 +60,7 @@ export function DeleteAccountDialog({ userId }: { userId: number }) {
                         <div className="flex justify-between items-center">
                             <Button onClick={handleClose} variant="outline">Cancel</Button>
                             <form action={action}>
-                                <Input type='number' name='userId' defaultValue={userId} readOnly className="hidden" />
+                                <Input type='number' name='userId' defaultValue={userId} readOnly={true} className="hidden" />
                                 <Button type='submit' size='lg' aria-disabled={pending} disabled={pending} variant="destructive">Delete Account</Button>
                             </form>
                         </div>
