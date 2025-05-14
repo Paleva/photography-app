@@ -532,7 +532,7 @@ async function seed() {
             username: `User_${i + 1}`,
             email: `user${i + 1}@example.com`,
             password: `${await bcrypt.hash("testtest", 10)}`,
-            role: "User",
+            role: "user",
             profile_picture: `https://i.pravatar.cc/150?u=${i + 1}`,
             bio: "Photography lover",
         }));
@@ -540,7 +540,7 @@ async function seed() {
     const userData = await Promise.all(userDataPromise);
 
     const insertedUsers = await db.insert(users).values(userData).returning();
-    await db.update(users).set({ role: "Admin" }).where(eq(users.id, 4))
+    await db.update(users).set({ role: "admin" }).where(eq(users.id, 4))
     // Insert Categories
     const insertedCategories = await db.insert(categories).values([
         { name: "nature" },

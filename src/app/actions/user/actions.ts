@@ -92,7 +92,7 @@ export async function deleteAccount(state: DeleteFormState, formData: FormData):
             await db.delete(comments).where(eq(comments.user_id, user.id))
             await db.delete(likes).where(eq(likes.user_id, user.id))
             await db.delete(users).where(eq(users.id, user.id))
-        } else if (role === 'admin') {
+        } else if (role.toLowerCase() === 'admin') {
             const [user] = await db.select().from(users).where(eq(users.id, idToDelete))
             await db.delete(posts).where(eq(posts.user_id, user.id))
             await db.delete(comments).where(eq(comments.user_id, user.id))
