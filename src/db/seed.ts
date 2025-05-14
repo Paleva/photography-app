@@ -1,5 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Client } from "pg";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { users, posts, categories, comments, likes } from "./schema";
 import { imageSizeFromFile } from "image-size/fromFile";
@@ -539,7 +540,7 @@ async function seed() {
     const userData = await Promise.all(userDataPromise);
 
     const insertedUsers = await db.insert(users).values(userData).returning();
-
+    await db.update(users).set({ role: "Admin" }).where(eq(users.id, 4))
     // Insert Categories
     const insertedCategories = await db.insert(categories).values([
         { name: "nature" },
