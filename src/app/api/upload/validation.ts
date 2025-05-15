@@ -52,7 +52,7 @@ export const uploadUserSchema = z.object({
 })
 
 export const uploadPostSchema = z.object({
-    title: z.string().min(1, { message: "Title is required" }),
+    title: z.string().min(1, { message: "Title is required" }).max(245, { message: "Title must be less than 245 characters" }).trim(),
     file: z.instanceof(File).refine(
         (file) =>
             [
