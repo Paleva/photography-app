@@ -96,7 +96,7 @@ export function ClientPostCard({
                 {/* Bottom gradient overlay */}
                 <div className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent ${overlayVisibilityClass} transition-opacity duration-300 ${post.isVertical ? 'pb-3 pr-2 pl-2' : 'pl-2 pr-2'}  text-white`}>
                     <div className="mb-1 sm:mb-3 flex items-center justify-between" onClick={e => isTouchDevice && e.stopPropagation()}>
-                        <div className="flex-col items-center gap-1 sm:gap-2 max-w-[80%]">
+                        <div className="flex-col items-center gap-1 sm:gap-2 max-w-[80%] ml-2">
                             <Link href={`/post/${post.id}`} >
                                 <h3 className="font-bold text-xl mb-1 line-clamp-1">{post.title}</h3>
                             </Link>
@@ -104,7 +104,7 @@ export function ClientPostCard({
                                 {post.description}
                             </p>
                         </div>
-                        <h4 className="items-center justify-end font-bold text-xs sm:text-base">{capitalizeFirstLetter(post.category)}</h4>
+                        <h4 className="items-center justify-end font-bold text-xs sm:text-base mr-2">{capitalizeFirstLetter(post.category)}</h4>
                     </div>
 
                     <div onClick={e => isTouchDevice && e.stopPropagation()}>

@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { addComment, getComments } from "../../app/actions/feed/comments-actions";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { CommentData } from "@/types/comment";
 
 export function Comments({ postId, userId }: { postId: number, userId: number }) {
     const [comment, setComment] = useState("");
-    const [comments, setComments] = useState<any[]>([]);
+    const [comments, setComments] = useState<CommentData[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const loadComments = async () => {

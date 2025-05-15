@@ -6,22 +6,24 @@ import { MasonryGrid } from '@/components/layouts/masonry-grid'
 import { ClientPostCard } from './postcard'
 import { PostData } from '@/types/postdata'
 
+
 const POSTS_PER_PAGE = 20
 
 interface InfiniteFeedProps {
-    initialPosts: any[]
+    initialPosts: PostData[]
     category?: string
     getPosts: (limit?: number, offset?: number, options?: {
         categoryName?: string,
         filterByUploaderId?: number,
         filterByLikedSessionUser?: boolean,
     }) => Promise<{
-        posts: any[]
+        posts: PostData[]
         hasMore: boolean
     }>
+    userId?: number
 }
 
-export function InfiniteFeed({ initialPosts, category = '', getPosts }: InfiniteFeedProps) {
+export function InfiniteFeed({ initialPosts, category = '', getPosts, userId }: InfiniteFeedProps) {
     const [posts, setPosts] = useState<PostData[]>(
         initialPosts.map((post) => ({
             ...post,
@@ -45,7 +47,6 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
             setPage(1)
             setHasMore(true)
             setPreviousCategory(category)
-
             const loadInitialPostsForCategory = async () => {
                 setIsLoading(true)
                 try {
@@ -75,7 +76,16 @@ export function InfiniteFeed({ initialPosts, category = '', getPosts }: Infinite
 
         setIsLoading(true)
         try {
-            const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE, category ? { categoryName: category } : {})
+
+            const options: { categoryName?: string; filterByUploaderId?: number } = {}
+            if (userId) {
+                options.filterByUploaderId = userId
+            }
+            if (category) {
+                options.categoryName = category
+            }
+
+            const result = await getPosts(POSTS_PER_PAGE, page * POSTS_PER_PAGE, options)
             if (result.posts && result.posts.length > 0) {
                 const posts = result.posts.map(post => ({
                     ...post,

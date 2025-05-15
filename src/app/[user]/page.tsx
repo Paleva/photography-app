@@ -2,7 +2,7 @@ import { UserCard } from "@/components/profile/UserCard"
 import { db, users } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { getFeedPosts } from "../actions/feed/actions"
-import { InfiniteFeedUser } from "@/components/feed/infinite-feed-user"
+import { InfiniteFeed } from "@/components/feed/infinite-feed"
 import { verifySession } from "../(public)/auth/session"
 import { DeleteUser } from "@/components/admin/DeleteUser"
 
@@ -47,7 +47,7 @@ export default async function Page({
                 )}
             </div>
             <div className='p-2'>
-                <InfiniteFeedUser
+                <InfiniteFeed
                     initialPosts={initialPosts.posts}
                     getPosts={getFeedPosts}
                     userId={userId}
