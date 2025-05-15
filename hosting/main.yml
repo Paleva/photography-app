@@ -28,6 +28,11 @@
         name: nginx
         state: started
         enabled: true
+    - name: Move nginx configuration
+      become: true
+      copy:
+        src: ./nginx.conf
+        dest: /etc/nginx/
 
     - name: Start and enable PostgreSQL
       become: true
