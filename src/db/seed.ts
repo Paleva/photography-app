@@ -615,7 +615,6 @@ async function seed() {
     await db.insert(likes).values(likeData);
 
 
-    // Insert Comments (optional)
     const commentData = [];
     for (let i = 0; i < 1000; i++) {
         const post = insertedPosts[Math.floor(Math.random() * insertedPosts.length)];
