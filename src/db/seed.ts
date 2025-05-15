@@ -600,15 +600,12 @@ async function seed() {
     }
 
     const likeData: LikeData[] = [];
-    const postLikesCount = new Map<number, number>();
 
     insertedPosts.forEach((post) => {
         const likeCount = Math.floor(Math.random() * 10) + 1;
         const shuffledUsers = [...insertedUsers]
             .sort(() => 0.5 - Math.random())
             .slice(0, likeCount);
-
-        postLikesCount.set(post.id, shuffledUsers.length);
 
         shuffledUsers.forEach((user) => {
             likeData.push({ user_id: user.id, post_id: post.id });
